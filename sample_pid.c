@@ -12,6 +12,7 @@
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
 #include "balancer.h" /* 倒立振子制御用ヘッダファイル */
+#include "ini.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -31,8 +32,7 @@ DeclareTask(TaskLogger);
 #define P_GAIN             2.5F /* 完全停止用モータ制御比例係数 2.5*/
 #define PWM_ABS_MAX         60 /* 完全停止用モータ制御PWM絶対最大値 60*/
 /* sample_c4マクロ */
-#define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
-#define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
+
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
 /* PID制御マクロ */
 #define DELTA_T 0.004	//処理周期(4ms)
@@ -163,30 +163,6 @@ static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
 static float kp = KP;
-
-//*****************************************************************************
-// 関数名 : ecrobot_device_initialize
-// 引数 : なし
-// 戻り値 : なし
-// 概要 : ECROBOTデバイス初期化処理フック関数
-//*****************************************************************************
-void ecrobot_device_initialize()
-{
-	/*************デバイス名を設定する***************/
-	if(ecrobot_get_bt_status()==BT_NO_INIT){
-		/**
-		 * Bluetooth通信用デバイス名の変更は、Bluetooth通信接続が確立されていない場合のみ有効です。
-		 * 通信接続確立時にはデバイス名は変更されません。(下記のAPIは何もしません)
-		 */
-		ecrobot_set_bt_device_name(DEVICE_NAME);
-	}
-	/************************************************/
-
-	ecrobot_set_light_sensor_active(NXT_PORT_S3); /* 光センサ赤色LEDをON */
-	ecrobot_init_sonar_sensor(NXT_PORT_S2); /* 超音波センサ(I2C通信)を初期化 */
-	nxt_motor_set_count(NXT_PORT_A, 0); /* 完全停止用モータエンコーダリセット */
-	ecrobot_init_bt_slave(PASS_KEY); /* Bluetooth通信初期化 */
-}
 
 //*****************************************************************************
 // 関数名 : ecrobot_device_terminate
@@ -910,7 +886,6 @@ float pid_control(int sensor_val, int target_val)
 // 戻り値 : 下限値＜値<上限値
 // 概要 :
 //*****************************************************************************
-
 float math_limit(float val, float min, float max)
 {
 	if(val < min) {
