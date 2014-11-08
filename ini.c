@@ -40,4 +40,19 @@ void ecrobot_device_initialize()
 	nxt_motor_set_count(NXT_PORT_A, 0); /* 完全停止用モータエンコーダリセット */
 	ecrobot_init_bt_slave(PASS_KEY); /* Bluetooth通信初期化 */
 }
+//*****************************************************************************
+// 関数名 : ecrobot_device_terminate
+// 引数 : なし
+// 戻り値 : なし
+// 概要 : ECROBOTデバイス終了処理フック関数
+//*****************************************************************************
+void ecrobot_device_terminate()
+{
+	nxt_motor_set_speed(NXT_PORT_C,0,0);
+	nxt_motor_set_speed(NXT_PORT_B,0,0);
+	nxt_motor_set_speed(NXT_PORT_A,0,0);
 
+	ecrobot_set_light_sensor_inactive(NXT_PORT_S3); /* 光センサ赤色LEDをOFF */
+	ecrobot_term_sonar_sensor(NXT_PORT_S2); /* 超音波センサ(I2C通信)を終了 */
+	ecrobot_term_bt_connection(); /* Bluetooth通信を終了 */
+}

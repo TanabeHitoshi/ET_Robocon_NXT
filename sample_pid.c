@@ -12,6 +12,7 @@
 #include "kernel_id.h"
 #include "ecrobot_interface.h"
 #include "balancer.h" /* 倒立振子制御用ヘッダファイル */
+#include "ini.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -56,7 +57,7 @@ static int remote_start(void);
 static float pid_control(int sensor_val, int target_val);
 static float math_limit(float val, float min, float max);
 static void calibration(int *black,int *white,int angle);
-static void line_follow(int speed, int turn, int gyro);
+void line_follow(int speed, int turn, int gyro);
 static void line_follow2(int speed, int max, int min);
 static void line_follow3(int speed, int max, int min);
 static void turn_left_gyro(int speed, int turn, int gyro);
@@ -163,7 +164,7 @@ static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
 static float kp = KP;
-
+#if 0
 //*****************************************************************************
 // 関数名 : ecrobot_device_initialize
 // 引数 : なし
@@ -204,7 +205,7 @@ void ecrobot_device_terminate()
 	ecrobot_term_sonar_sensor(NXT_PORT_S2); /* 超音波センサ(I2C通信)を終了 */
 	ecrobot_term_bt_connection(); /* Bluetooth通信を終了 */
 }
-
+#endif
 //*****************************************************************************
 // 関数名 : user_1ms_isr_type2
 // 引数 : なし
