@@ -10,6 +10,6 @@
 
 #define GYRO_OFFSET 600 /* ジャイロセンサオフセット値(角速度0[deg/sec]時) 600*/
 
-static void line_follow(int speed, int turn, int gyro);
+void line_follow(int speed, int turn, int gyro);
 
 #endif /* DRIVE_H_ */
