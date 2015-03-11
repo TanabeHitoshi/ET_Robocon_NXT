@@ -13,6 +13,7 @@
 #include "ecrobot_interface.h"
 #include "balancer.h" /* 倒立振子制御用ヘッダファイル */
 #include "ini.h"
+#include "Seesaw.h"
 //#include "drive.h"
 
 /* OSEK declarations */
@@ -68,7 +69,7 @@ static int tripmeter(void);
 static int tripmeter_left(void);
 static int tripmeter_right(void);
 static int strlen(const char *s);
-static int check_Seesaw(void);
+//static int check_Seesaw(void);
 static int check_course(int distance);
 static void check_position(void);
 
@@ -433,7 +434,7 @@ TASK(TaskMain)
 			//	measure0 = tripmeter();
 			//	pattern = 31;
 			//}
-			if (check_Seesaw()>2) {
+			if (check_Seesaw(gyro_sensor)>2) {
 				ecrobot_sound_tone(440*3, 100, 100);
 				measure0 = tripmeter();
 				counter = 0;
@@ -486,7 +487,7 @@ TASK(TaskMain)
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			speed = 20;
 //			tail_control(TAIL_ANGLE_STAND_UP - 25);
-			if( check_Seesaw() > 2 ){
+			if( check_Seesaw(gyro_sensor) > 2 ){
 				counter = 0;
 				measure0 = tripmeter();
 				pattern = 41;
@@ -567,7 +568,7 @@ TASK(TaskMain)
 		case 46:/* 段差の検知 */
 			kp = KP;
 			speed = 40;
-			if( check_Seesaw()>2 ){
+			if( check_Seesaw(gyro_sensor)>2 ){
 				counter = 0;
 				measure0 = tripmeter();
 				pattern = 47;
@@ -1117,7 +1118,7 @@ static int tripmeter_right(void)
 // 返り値 : 連続数
 // 概要 : ジャイロセンサの値が一定以上連続した場合カウントする
 //*****************************************************************************
-
+/*
 static int check_Seesaw(void)
 {
 	static int prev_gyro, diff_gyro, cnt_gyro = 0;
@@ -1126,7 +1127,7 @@ static int check_Seesaw(void)
 	prev_gyro = gyro_sensor;
 	return cnt_gyro;
 }
-
+*/
 //*****************************************************************************
 // 関数名 : strlen
 // 引数 :文字列へのポインタ
