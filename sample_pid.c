@@ -49,9 +49,6 @@ DeclareTask(TaskLogger);
 #define OUT 2
 #define TEST 3 //テストコース
 
-
-
-
 /* 関数プロトタイプ宣言 */
 
 static void tail_control(signed int angle);
@@ -60,16 +57,11 @@ static float pid_control(int sensor_val, int target_val);
 static float math_limit(float val, float min, float max);
 static void calibration(int *black,int *white,int angle);
 void line_follow(int speed, int turn, int gyro);
-//static void line_follow2(int speed, int max, int min);
-//static void line_follow3(int speed, int max, int min);
-static void turn_left_gyro(int speed, int turn, int gyro);
-static void turn_right_gyro(int speed, int turn, int gyro);
 static int check_marker(int turn);
 static int tripmeter(void);
 static int tripmeter_left(void);
 static int tripmeter_right(void);
 static int strlen(const char *s);
-//static int check_Seesaw(void);
 static int check_course(int distance);
 static void check_position(void);
 
@@ -935,48 +927,6 @@ void calibration(int *black,int *white,int angle)
 #if 1
 
 #endif
-
-//*****************************************************************************
-// 関数名 : line_follow
-// 引数 : speed, turn 走行速度、旋回速度
-// 引数 : gyro_sensor　ジャイロセンサー値
-// 返り値 : 無し
-// 概要 : ライントレース
-//*****************************************************************************
-void turn_left_gyro(int speed, int turn, int gyro_sensor)
-{
-	signed char pwm_L, pwm_R; // 左右モータPWM出力
-	balance_control(
-		(float)speed,								 /* 前後進命令(+:前進, -:後進) */
-		(float)turn,								 /* 旋回命令(+:右旋回, -:左旋回) */
-		(float)gyro_sensor, /* ジャイロセンサ値 */
-		(float)GYRO_OFFSET,							 /* ジャイロセンサオフセット値 */
-		(float)nxt_motor_get_count(NXT_PORT_C),		 /* 左モータ回転角度[deg] */
-		(float)nxt_motor_get_count(NXT_PORT_B),		 /* 右モータ回転角度[deg] */
-		(float)ecrobot_get_battery_voltage(),		 /* バッテリ電圧[mV] */
-		&pwm_L,										 /* 左モータPWM出力値 */
-		&pwm_R									 /* 右モータPWM出力値 */
-	);
-	nxt_motor_set_speed(NXT_PORT_C, pwm_L-50, 1); /* 左モータPWM出力セット(-100～100) */
-	nxt_motor_set_speed(NXT_PORT_B, pwm_R+40, 1); /* 右モータPWM出力セット(-100～100) */
-}
-void turn_right_gyro(int speed, int turn, int gyro_sensor)
-{
-	signed char pwm_L, pwm_R; // 左右モータPWM出力
-	balance_control(
-		(float)speed,								 /* 前後進命令(+:前進, -:後進) */
-		(float)turn,								 /* 旋回命令(+:右旋回, -:左旋回) */
-		(float)gyro_sensor, /* ジャイロセンサ値 */
-		(float)GYRO_OFFSET,							 /* ジャイロセンサオフセット値 */
-		(float)nxt_motor_get_count(NXT_PORT_C),		 /* 左モータ回転角度[deg] */
-		(float)nxt_motor_get_count(NXT_PORT_B),		 /* 右モータ回転角度[deg] */
-		(float)ecrobot_get_battery_voltage(),		 /* バッテリ電圧[mV] */
-		&pwm_L,										 /* 左モータPWM出力値 */
-		&pwm_R									 /* 右モータPWM出力値 */
-	);
-	nxt_motor_set_speed(NXT_PORT_C, pwm_L+10, 1); /* 左モータPWM出力セット(-100～100) */
-	nxt_motor_set_speed(NXT_PORT_B, pwm_R-10, 1); /* 右モータPWM出力セット(-100～100) */
-}
 
 //*****************************************************************************
 // 関数名 : check_marker

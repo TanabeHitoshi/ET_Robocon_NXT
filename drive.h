@@ -19,5 +19,7 @@
 void line_follow(int speed, int turn, int gyro);
 void line_follow2(int speed, int black, int white);
 void line_follow3(int speed, int black, int white);
+void turn_left_gyro(int speed, int turn, int gyro_sensor);
+void turn_right_gyro(int speed, int turn, int gyro_sensor);
 
 #endif /* DRIVE_H_ */
