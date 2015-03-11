@@ -49,8 +49,8 @@ DeclareTask(TaskLogger);
 #define OUT 2
 #define TEST 3 //テストコース
 
-#define TH(b,w)  ((b + w) / 2)	//(522)
-#define TH2(b,w) ((b + w) / 2)	//(582)
+
+
 
 /* 関数プロトタイプ宣言 */
 
@@ -60,8 +60,8 @@ static float pid_control(int sensor_val, int target_val);
 static float math_limit(float val, float min, float max);
 static void calibration(int *black,int *white,int angle);
 void line_follow(int speed, int turn, int gyro);
-static void line_follow2(int speed, int max, int min);
-static void line_follow3(int speed, int max, int min);
+//static void line_follow2(int speed, int max, int min);
+//static void line_follow3(int speed, int max, int min);
 static void turn_left_gyro(int speed, int turn, int gyro);
 static void turn_right_gyro(int speed, int turn, int gyro);
 static int check_marker(int turn);
@@ -165,7 +165,7 @@ static int gyro_sensor = 255; // ジャイロセンサの値
 static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
-static float kp = KP;
+float kp = KP;
 //*****************************************************************************
 // 関数名 : user_1ms_isr_type2
 // 引数 : なし
@@ -935,48 +935,6 @@ void calibration(int *black,int *white,int angle)
 #if 1
 
 #endif
-//*****************************************************************************
-// 関数名 : line_follow2
-// 引数 : Black (黒のセンサ値)
-// 引数 : white (白のセンサ値)
-// 返り値 : 無し
-// 概要 : バランサーを使用しないライントレース
-//*****************************************************************************
-static void line_follow2(int speed, int black, int white)
-{
-	int pwm_L, pwm_R, turn2;
-	turn2 = KP * (ecrobot_get_light_sensor(NXT_PORT_S3) - TH2(black, white));
-	if (turn2 > 50) turn = 50;
-	if (turn2 < -50) turn  = -50;
-	pwm_L = speed - turn2;
-	pwm_R = speed + turn2;
-	if (pwm_L > 100) pwm_L = 100;
-	if (pwm_L < -100) pwm_L  = -100;
-	if (pwm_R > 100) pwm_R = 100;
-	if (pwm_R < -100) pwm_R  = -100;
-	nxt_motor_set_speed(NXT_PORT_C, pwm_L, 1); /* 左モータPWM出力セット(-100～100) */
-	nxt_motor_set_speed(NXT_PORT_B, pwm_R, 1); /* 右モータPWM出力セット(-100～100) */
-	//xsprintf(tx_buf,"lf2:turn2=%d,%d\n",turn2,ecrobot_get_light_sensor(NXT_PORT_S3));
-	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
-}
-
-static void line_follow3(int speed, int black, int white)
-{
-	int pwm_L, pwm_R, turn2;
-	turn2 = KP * (ecrobot_get_light_sensor(NXT_PORT_S3) - TH2(black, white));
-	if (turn2 > 50) turn = 50;
-	if (turn2 < -50) turn  = -50;
-	pwm_L = speed + turn2;
-	pwm_R = speed - turn2;
-	if (pwm_L > 100) pwm_L = 100;
-	if (pwm_L < -100) pwm_L  = -100;
-	if (pwm_R > 100) pwm_R = 100;
-	if (pwm_R < -100) pwm_R  = -100;
-	nxt_motor_set_speed(NXT_PORT_C, pwm_L, 1); /* 左モータPWM出力セット(-100～100) */
-	nxt_motor_set_speed(NXT_PORT_B, pwm_R, 1); /* 右モータPWM出力セット(-100～100) */
-	xsprintf(tx_buf,"lf2:turn2=%d,%d\n",turn2,ecrobot_get_light_sensor(NXT_PORT_S3));
-	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
-}
 
 //*****************************************************************************
 // 関数名 : line_follow
