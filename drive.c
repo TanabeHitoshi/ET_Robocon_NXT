@@ -130,3 +130,23 @@ void turn_right_gyro(int speed, int turn, int gyro_sensor)
 	nxt_motor_set_speed(NXT_PORT_B, pwm_R-10, 1); /* 右モータPWM出力セット(-100～100) */
 }
 
+//*****************************************************************************
+// 関数名 : tail_control
+// 引数 : angle (モータ目標角度[度])
+// 返り値 : 無し
+// 概要 : 走行体完全停止用モータの角度制御
+//*****************************************************************************
+void tail_control(signed int angle)
+{
+	float pwm = (float)(angle - nxt_motor_get_count(NXT_PORT_A))*P_GAIN; /* 比例制御 */
+	/* PWM出力飽和処理 */
+	if (pwm > PWM_ABS_MAX)	{
+		pwm = PWM_ABS_MAX;
+	}
+	else if (pwm < -PWM_ABS_MAX) {
+		pwm = -PWM_ABS_MAX;
+	}
+
+	nxt_motor_set_speed(NXT_PORT_A, (signed char)pwm, 1);
+}
+

@@ -15,6 +15,7 @@
 #include "ini.h"
 #include "Seesaw.h"
 #include "drive.h"
+#include "isLineSensor.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -31,29 +32,21 @@ DeclareTask(TaskLogger);
 /* sample_c3マクロ */
 #define TAIL_ANGLE_STAND_UP 105 /* 完全停止時の角度[度] 108*/
 #define TAIL_ANGLE_DRIVE      0 /* バランス走行時の角度[度] 3*/
-#define P_GAIN             2.5F /* 完全停止用モータ制御比例係数 2.5*/
-#define PWM_ABS_MAX         60 /* 完全停止用モータ制御PWM絶対最大値 60*/
 /* sample_c4マクロ */
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
 /* PID制御マクロ */
-#define DELTA_T 0.004	//処理周期(4ms)
+
 #define KP 0.7	//0.38
 #define KI 0.0	//0.06
 #define KD 0.1
 
-/* インコース、アウトコース */
-#define CMAX 10
-#define IN 1
-#define OUT 2
-#define TEST 3 //テストコース
+
 
 /* 関数プロトタイプ宣言 */
-
-static void tail_control(signed int angle);
 static int remote_start(void);
-static float pid_control(int sensor_val, int target_val);
+//static float pid_control(int sensor_val, int target_val);
 static float math_limit(float val, float min, float max);
 static void calibration(int *black,int *white,int angle);
 void line_follow(int speed, int turn, int gyro);
@@ -147,7 +140,7 @@ DATA_LOG_t data_log;
 //static float integral;
 
 static int pattern = 0; /* ロボットの状態 */
-static int course = 0; /* 走行するコース IN or OUT */
+
 static int sonar = 255; //超音波センサ(無探知は255)
 static int turn = 0, speed = 0; // 旋回速度、走行速度
 static int light_sensor; //超音波センサ(無探知は255)
@@ -157,7 +150,7 @@ static int gyro_sensor = 255; // ジャイロセンサの値
 static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
-float kp = KP;
+
 //*****************************************************************************
 // 関数名 : user_1ms_isr_type2
 // 引数 : なし
@@ -770,25 +763,6 @@ TASK(TaskLogger)
 
 ///////////////////////////////////////////////////////////////////////////////
 
-//*****************************************************************************
-// 関数名 : tail_control
-// 引数 : angle (モータ目標角度[度])
-// 返り値 : 無し
-// 概要 : 走行体完全停止用モータの角度制御
-//*****************************************************************************
-static void tail_control(signed int angle)
-{
-	float pwm = (float)(angle - nxt_motor_get_count(NXT_PORT_A))*P_GAIN; /* 比例制御 */
-	/* PWM出力飽和処理 */
-	if (pwm > PWM_ABS_MAX)	{
-		pwm = PWM_ABS_MAX;
-	}
-	else if (pwm < -PWM_ABS_MAX) {
-		pwm = -PWM_ABS_MAX;
-	}
-
-	nxt_motor_set_speed(NXT_PORT_A, (signed char)pwm, 1);
-}
 
 //*****************************************************************************
 // 関数名 : remote_start
@@ -825,54 +799,6 @@ static int remote_start(void)
 	}
 
 	return start;
-}
-
-//*****************************************************************************
-// 関数名 : pid_sample
-// 引数 : sensor_val (センサー値), target_val(目標値)
-// 返り値 : 操作量
-// 概要 :PID制御サンプル（下記のところからのコピー）
-// ETロボコンではじめるシステム制御（4）
-// 滑らかで安定したライントレースを実現する」
-// http://monoist.atmarkit.co.jp/mn/articles/1007/26/news083.html
-//*****************************************************************************
-
-float pid_control(int sensor_val, int target_val)
-{
-	float p =0, i=0, d=0;
-
-	static signed int diff[2] = {0, 0};
-	static float integral = 0.0;
-
-	diff[0] = diff[1];
-	diff[1] = sensor_val - target_val;	//偏差を取得
-	integral += (diff[1] + diff[0]) / 2.0 * DELTA_T;
-
-	p = kp * diff[1];
-	i = KI * integral;
-	d = KD * (diff[1] - diff[0]) / DELTA_T;
-	//xsprintf(tx_buf,"pid:s=%d,t=%d,pid=%d\n",sensor_val,target_val,(int)(p+i+d));
-	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
-	if (course == OUT) 	return  -math_limit(p + i + d, -100.0, 100.0);
-	else return  math_limit(p + i + d, -100.0, 100.0);
-}
-
-//*****************************************************************************
-// 関数名 : math_limit
-// 引数 : 値、下限値、上限値
-// 戻り値 : 下限値＜値<上限値
-// 概要 :
-//*****************************************************************************
-
-float math_limit(float val, float min, float max)
-{
-	if(val < min) {
-		return min;
-	} else if(val > max) {
-		return max;
-	}
-
-	return val;
 }
 
 //*****************************************************************************
@@ -935,7 +861,6 @@ void calibration(int *black,int *white,int angle)
 // 返り値 : マーカー発見ならば１そうでないなら０
 // 概要 : バランサーを使用しないライントレースTH(black, white)
 //*****************************************************************************
-
 static int check_marker(int turn)
 {
 	static int r=0,l=0;
@@ -998,22 +923,6 @@ static int tripmeter_right(void)
 }
 
 //*****************************************************************************
-// 関数名 : check_Seesaw
-// 引数 :なし
-// 返り値 : 連続数
-// 概要 : ジャイロセンサの値が一定以上連続した場合カウントする
-//*****************************************************************************
-/*
-static int check_Seesaw(void)
-{
-	static int prev_gyro, diff_gyro, cnt_gyro = 0;
-	diff_gyro = gyro_sensor - prev_gyro;
-	if (diff_gyro > 15) {cnt_gyro++;} else {cnt_gyro = 0;}
-	prev_gyro = gyro_sensor;
-	return cnt_gyro;
-}
-*/
-//*****************************************************************************
 // 関数名 : strlen
 // 引数 :文字列へのポインタ
 // 返り値 : 文字数
@@ -1034,7 +943,6 @@ int strlen(const char *s)
 // 走行距離で現在のコース状況をナビ
 // 返り値 : 配列の添え字
 //*****************************************************************************
-
 int check_course(int distance)
 {
 	int i, found = CMAX - 1;
@@ -1073,7 +981,6 @@ int check_course(int distance)
 // 返り値 : グローバル変数x, yを更新
 // 概要 : 自己位置座標推定
 //*****************************************************************************
-
 void check_position(void)
 {
 	int l_arc, r_arc;
