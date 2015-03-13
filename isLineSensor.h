@@ -23,5 +23,6 @@ extern float kp;
 extern int course; /* 走行するコース IN or OUT */
 
 float pid_control(int sensor_val, int target_val);
+void calibration(int *black,int *white,int angle);
 
 #endif
