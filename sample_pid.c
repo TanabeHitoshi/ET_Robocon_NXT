@@ -48,7 +48,6 @@ DeclareTask(TaskLogger);
 /* 関数プロトタイプ宣言 */
 static int remote_start(void);
 static int strlen(const char *s);
-static int check_course(int distance);
 static void check_position(void);
 
 /* Bluetooth通信用データ受信バッファ */
@@ -65,13 +64,7 @@ typedef struct {
 } POSITION_t;
 
 
-/* コースデータ */
-typedef struct {
-	// S:直線 U:登り坂 D:下り坂 L:左カーブ R:右カーブ E:その他 M:マーカ X:終点
-    char state;
-    int distance;
-    int speed;
-} ET_COURSE_t;
+
 
 /* log用構造体 */
 typedef struct {
@@ -87,44 +80,6 @@ typedef struct {
 
 POSITION_t now, prev = {0.0, 0.0, 0.0, 0, 0};
 
-ET_COURSE_t in_course[CMAX] = {
-	{'S',0,40},
-	{'U',1806,50},
-	{'D',2378,30},
-	{'S',3518,50},
-	{'L',3858,40},
-	{'S',5114,50},
-	{'E',6424,40},
-	{'M',17270,20},
-	{'G',19586,20},
-	{'X',19956,0}
-};
-
-ET_COURSE_t out_course[CMAX] = {
-	{'S',0,40},
-	{'U',1020,50},
-	{'D',1592,30},
-	{'S',2732,50},
-	{'L',3072,40},
-	{'S',4722,50},
-	{'E',6018,40},
-	{'M',18276,20},
-	{'G',19566,20},
-	{'X',19936,0}
-};
-
-ET_COURSE_t test_course[CMAX] = {
-	{'S',0,50},
-	{'M',2000,50},
-	{'M',2850,50},
-	{'X',3000,0},
-	{'X',3001,0},
-	{'X',3002,0},
-	{'X',3003,0},
-	{'X',3004,0},
-	{'X',3005,0},
-	{'X',3006,0}
-};
 
 DATA_LOG_t data_log;
 
@@ -815,44 +770,6 @@ int strlen(const char *s)
 
     return (len);
 }
-//*****************************************************************************
-// 関数名 : check_course
-// 引数 : 距離
-// 走行距離で現在のコース状況をナビ
-// 返り値 : 配列の添え字
-//*****************************************************************************
-int check_course(int distance)
-{
-	int i, found = CMAX - 1;
-
-	for (i=0; i<CMAX; i++) {
-		if (course == IN) { //in
-			if (distance < in_course[i].distance) {
-				found = i-1;
-				//printf("found...%d trip:%d\n",found,distance);
-				break;
-			}
-		} else if (course == OUT){ //out
-			if (distance < out_course[i].distance) {
-				found = i-1;
-				//printf("out\n");
-				//printf("found...%d trip:%d\n",found,distance);
-				break;
-			}
-		} else {
-			if (distance < test_course[i].distance) {
-				found = i-1;
-				//printf("out\n");
-				//printf("found...%d trip:%d\n",found,distance);
-				break;
-			}
-		}
-
-	}
-
-	return found;
-}
-
 //*****************************************************************************
 // 関数名 : check_position
 // 引数 :なし

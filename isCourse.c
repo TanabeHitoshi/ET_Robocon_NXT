@@ -12,7 +12,11 @@
 #include "ecrobot_interface.h"
 #include "balancer.h" /* 倒立振子制御用ヘッダファイル */
 #include "ini.h"
+#include "isLineSensor.h"
 #include "isCourse.h"
+
+
+
 
 //*****************************************************************************
 // 関数名 : check_marker
@@ -82,3 +86,41 @@ int tripmeter_right(void)
 	int s = nxt_motor_get_count(NXT_PORT_B); // エンコーダ右
 	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
 }
+//*****************************************************************************
+// 関数名 : check_course
+// 引数 : 距離
+// 走行距離で現在のコース状況をナビ
+// 返り値 : 配列の添え字
+//*****************************************************************************
+int check_course(int distance)
+{
+	int i, found = CMAX - 1;
+
+	for (i=0; i<CMAX; i++) {
+		if (course == IN) { //in
+			if (distance < in_course[i].distance) {
+				found = i-1;
+				//printf("found...%d trip:%d\n",found,distance);
+				break;
+			}
+		} else if (course == OUT){ //out
+			if (distance < out_course[i].distance) {
+				found = i-1;
+				//printf("out\n");
+				//printf("found...%d trip:%d\n",found,distance);
+				break;
+			}
+		} else {
+			if (distance < test_course[i].distance) {
+				found = i-1;
+				//printf("out\n");
+				//printf("found...%d trip:%d\n",found,distance);
+				break;
+			}
+		}
+
+	}
+
+	return found;
+}
+
