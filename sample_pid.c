@@ -801,55 +801,6 @@ static int remote_start(void)
 	return start;
 }
 
-//*****************************************************************************
-// 関数名 : calibration
-// 引数 : *black (黒、最小値)，*white（白、最大値）
-// 返り値 : 無し
-// 概要 : 光センサの手動キャリブレーション
-//        黒白の順でタッチする。
-//*****************************************************************************
-void calibration(int *black,int *white,int angle)
-{
-	while(1) {
-		tail_control(angle);
-
-		if (ecrobot_get_touch_sensor(NXT_PORT_S4) == 1) {
-			ecrobot_sound_tone(440, 170, 100);
-			*black = ecrobot_get_light_sensor(NXT_PORT_S3);
-			display_clear(0);		/* 画面表示 */
-			display_goto_xy(0, 1);
-			display_string("BLACK:");
-			display_int(*black, 4);
-			break;
-		}//if
-		systick_wait_ms(100); /* 10msecウェイト */
-	}//while
-	display_update();
-	while(ecrobot_get_touch_sensor(NXT_PORT_S4));
-	ecrobot_sound_tone(880, 170, 100);
-
-	while(1) {
-		tail_control(angle);
-		if (ecrobot_get_touch_sensor(NXT_PORT_S4) == 1) {
-			ecrobot_sound_tone(880, 170, 100);
-			*white = ecrobot_get_light_sensor(NXT_PORT_S3);
-			//display_clear(0);		/* 画面表示 */
-			display_goto_xy(0, 2);
-			display_string("WHITE:");
-			display_int(*white, 4);
-			break;
-		}//if
-		systick_wait_ms(100); /* 10msecウェイト */
-	}//while
-
-	//display_clear(0);		/* 画面表示 */
-	display_goto_xy(0,4);
-	display_string("TH:");
-	display_int(TH(*black,*white), 3);
-	display_update();
-	while(ecrobot_get_touch_sensor(NXT_PORT_S4));
-	ecrobot_sound_tone(440, 170, 100);
-}
 #if 1
 
 #endif
