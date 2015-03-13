@@ -22,6 +22,8 @@
 // 概要 : バランサーを使用しないライントレースTH(black, white)
 //*****************************************************************************
 int check_marker(int turn)
+
+
 {
 	static int r=0,l=0;
 	if(turn < -20) {
@@ -53,4 +55,30 @@ int check_marker(int turn)
 		return -1;
 	}
 	return 0;
+}
+//*****************************************************************************
+// 関数名 : tripmeter
+// 引数 : なし	NXT_PORT_C(左), NXT_PORT_B(右)
+// 返り値 : 走行距離（ｍｍ）
+// 概要 : エンコーダーで走行距離を測定する
+//*****************************************************************************
+int tripmeter(void)
+{
+	int circumference  = 254; // 車輪円周長さ(mm)
+	int s = (nxt_motor_get_count(NXT_PORT_C) + nxt_motor_get_count(NXT_PORT_B)); // エンコーダ左右合計
+	return (((s / 360) * circumference) + (circumference * (s % 360) / 360)) / 2;
+}
+
+int tripmeter_left(void)
+{
+	int circumference  = 254; // 車輪円周長さ(mm)
+	int s = nxt_motor_get_count(NXT_PORT_C); // エンコーダ左
+	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
+}
+
+int tripmeter_right(void)
+{
+	int circumference  = 254; // 車輪円周長さ(mm)
+	int s = nxt_motor_get_count(NXT_PORT_B); // エンコーダ右
+	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
 }

@@ -47,14 +47,6 @@ DeclareTask(TaskLogger);
 
 /* 関数プロトタイプ宣言 */
 static int remote_start(void);
-//static float pid_control(int sensor_val, int target_val);
-//static float math_limit(float val, float min, float max);
-//static void calibration(int *black,int *white,int angle);
-//void line_follow(int speed, int turn, int gyro);
-//static int check_marker(int turn);
-static int tripmeter(void);
-static int tripmeter_left(void);
-static int tripmeter_right(void);
 static int strlen(const char *s);
 static int check_course(int distance);
 static void check_position(void);
@@ -807,32 +799,6 @@ static int remote_start(void)
 #endif
 
 
-//*****************************************************************************
-// 関数名 : tripmeter
-// 引数 : なし	NXT_PORT_C(左), NXT_PORT_B(右)
-// 返り値 : 走行距離（ｍｍ）
-// 概要 : エンコーダーで走行距離を測定する
-//*****************************************************************************
-static int tripmeter(void)
-{
-	int circumference  = 254; // 車輪円周長さ(mm)
-	int s = (nxt_motor_get_count(NXT_PORT_C) + nxt_motor_get_count(NXT_PORT_B)); // エンコーダ左右合計
-	return (((s / 360) * circumference) + (circumference * (s % 360) / 360)) / 2;
-}
-
-static int tripmeter_left(void)
-{
-	int circumference  = 254; // 車輪円周長さ(mm)
-	int s = nxt_motor_get_count(NXT_PORT_C); // エンコーダ左
-	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
-}
-
-static int tripmeter_right(void)
-{
-	int circumference  = 254; // 車輪円周長さ(mm)
-	int s = nxt_motor_get_count(NXT_PORT_B); // エンコーダ右
-	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
-}
 
 //*****************************************************************************
 // 関数名 : strlen
