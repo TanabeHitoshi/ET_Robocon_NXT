@@ -56,9 +56,6 @@ ET_COURSE_t test_course[CMAX] = {
 };
 
 int check_marker(int turn);
-int tripmeter(void);
-int tripmeter_left(void);
-int tripmeter_right(void);
 int check_course(int distance);
 
 #endif

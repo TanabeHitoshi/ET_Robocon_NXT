@@ -17,6 +17,7 @@
 #include "drive.h"
 #include "isLineSensor.h"
 #include "isCourse.h"
+#include "isPosition.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -48,21 +49,10 @@ DeclareTask(TaskLogger);
 /* 関数プロトタイプ宣言 */
 static int remote_start(void);
 static int strlen(const char *s);
-static void check_position(void);
 
 /* Bluetooth通信用データ受信バッファ */
 char rx_buf[BT_MAX_RX_BUF_SIZE];
 char tx_buf[128];
-
-/* 自己位置 */
-typedef struct {
-	float x; // X座標(mm)
-	float y; // Y座標(mm)
-	float dir; //進行方向(rad)
-	int l_enc; //左エンコーダ地
-	int r_enc; //右エンコーダ値
-} POSITION_t;
-
 
 
 
@@ -77,8 +67,6 @@ typedef struct {
 	int y;			//Ｙ座標
 	int dir;		//方向
 } DATA_LOG_t;
-
-POSITION_t now, prev = {0.0, 0.0, 0.0, 0, 0};
 
 
 DATA_LOG_t data_log;
@@ -769,34 +757,4 @@ int strlen(const char *s)
     while (*s++) len++;
 
     return (len);
-}
-//*****************************************************************************
-// 関数名 : check_position
-// 引数 :なし
-// 返り値 : グローバル変数x, yを更新
-// 概要 : 自己位置座標推定
-//*****************************************************************************
-void check_position(void)
-{
-	int l_arc, r_arc;
-	float l_distance, r_distance, distance;
-	float theta;
-
-	now.l_enc = nxt_motor_get_count(NXT_PORT_C);
-	now.r_enc = nxt_motor_get_count(NXT_PORT_B);
-
-	l_arc = now.l_enc - prev.l_enc;
-	r_arc = now.r_enc - prev.r_enc;
-
-	l_distance = 254.0 * l_arc / 360.0;
-	r_distance = 254.0 * r_arc / 360.0;
-	distance = (l_distance + r_distance) / 2.0;
-
-	theta = (l_arc - r_arc) / 140.0;
-
-	now.x = prev.x + (distance * cos(prev.dir + theta / 2.0));
-	now.y = prev.y + (distance * sin(prev.dir + theta / 2.0));
-	now.dir = theta + prev.dir;
-
-	prev = now;
 }
