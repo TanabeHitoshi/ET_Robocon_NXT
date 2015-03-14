@@ -232,7 +232,6 @@ TASK(TaskMain)
 			}
 			break;
 
-
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			speed = 20;
 //			tail_control(TAIL_ANGLE_STAND_UP - 25);
