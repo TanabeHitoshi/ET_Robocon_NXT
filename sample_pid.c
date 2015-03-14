@@ -18,6 +18,7 @@
 #include "isLineSensor.h"
 #include "isCourse.h"
 #include "isPosition.h"
+#include "bluetooth.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -47,13 +48,8 @@ DeclareTask(TaskLogger);
 
 
 /* 関数プロトタイプ宣言 */
-static int remote_start(void);
-static int strlen(const char *s);
-
-/* Bluetooth通信用データ受信バッファ */
-char rx_buf[BT_MAX_RX_BUF_SIZE];
-char tx_buf[128];
-
+//static int remote_start(void);
+//static int strlen(const char *s);
 
 
 /* log用構造体 */
@@ -72,11 +68,8 @@ typedef struct {
 DATA_LOG_t data_log;
 
 /* PID制御用 */
-//static signed int diff[2];
-//static float integral;
 
 static int pattern = 0; /* ロボットの状態 */
-
 static int sonar = 255; //超音波センサ(無探知は255)
 static int turn = 0, speed = 0; // 旋回速度、走行速度
 static int light_sensor; //超音波センサ(無探知は255)
@@ -85,7 +78,6 @@ static int gyro_sensor = 255; // ジャイロセンサの値
 
 static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
-
 
 //*****************************************************************************
 // 関数名 : user_1ms_isr_type2
@@ -700,61 +692,3 @@ TASK(TaskLogger)
 ///////////////////////////////////////////////////////////////////////////////
 
 
-//*****************************************************************************
-// 関数名 : remote_start
-// 引数 : 無し
-// 返り値 : 1(スタート)/0(待機)
-// 概要 : Bluetooth通信によるリモートスタート。 TeraTermなどのターミナルソフトから、
-//       ASCIIコードで1を送信すると、リモートスタートする。
-//*****************************************************************************
-static int remote_start(void)
-{
-	int i;
-	unsigned int rx_len;
-	unsigned char start = 0;
-
-	for (i=0; i< BT_MAX_RX_BUF_SIZE; i++) {
-		rx_buf[i] = 0; /* 受信バッファをクリア */
-	}
-
-	rx_len = ecrobot_read_bt(rx_buf, 0, BT_MAX_RX_BUF_SIZE);
-	if (rx_len > 0) {
-		/* 受信データあり */
-		if (rx_buf[0] == 'i' || rx_buf[0] == 'I') {
-			start = IN; /* IN 走行開始 */
-		}
-		if (rx_buf[0] == 'o' || rx_buf[0] == 'O') {
-			start = OUT; /* OUT 走行開始 */
-		}
-		if (rx_buf[0] == 't' || rx_buf[0] == 'T') {
-			start = TEST; /* OUT 走行開始 */
-		}
-		ecrobot_send_bt(rx_buf, 0, rx_len); /* 受信データをエコーバック */
-		xsprintf(tx_buf,"\n course = %d\n",start);
-		ecrobot_send_bt(tx_buf, 0, strlen(tx_buf));
-	}
-
-	return start;
-}
-
-#if 1
-
-#endif
-
-
-
-//*****************************************************************************
-// 関数名 : strlen
-// 引数 :文字列へのポインタ
-// 返り値 : 文字数
-// 概要 : 文字数カウント
-//*****************************************************************************
-
-int strlen(const char *s)
-{
-    int len = 0;
-
-    while (*s++) len++;
-
-    return (len);
-}
