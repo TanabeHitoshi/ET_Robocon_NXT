@@ -226,63 +226,12 @@ TASK(TaskMain)
 			}
 			break;
 
-		case 30: /*** シーソー：200mm速度を落としてアプローチ ***/
-			//xsprintf(tx_buf,"%4d, %3d\n",tripmeter(),gyro_sensor);
-			//ecrobot_send_bt(tx_buf,0, strlen(tx_buf)) ;
-			//if (tripmeter() - measure0 > 180 ) {
-			//	counter = 0;
-			//	measure0 = tripmeter();
-			//	pattern = 31;
-			//}
-			if (check_Seesaw(gyro_sensor)>2) {
-				ecrobot_sound_tone(440*3, 100, 100);
-				measure0 = tripmeter();
-				counter = 0;
-				pattern = 31;
-			}
-			speed = 20;
-			line_follow(speed, turn, gyro_sensor);
-			break;
-
-		case 31: /*** シーソー：150mmスピードをあげてシーソーに乗り上げる ***/
-			if (tripmeter() - measure0 > 30 ) {
-				counter = 0;
-				measure0 = tripmeter();
-				pattern = 32;
-			}
-			speed = 70;
-			line_follow(speed, turn, gyro_sensor);
-			break;
-
-		case 32: /*** シーソー：250mmゆっくり登る ***/
-			if (tripmeter() - measure0 > 450 ) {
-				counter = 0;
-				measure0 = tripmeter();
-				pattern = 33;
-			}
-			speed = 20;
-			line_follow(speed, turn, gyro_sensor);
-			break;
-
-		case 33: /*** シーソー：70mm下りはブレーキで ***/
-			if (tripmeter() - measure0 > 70 ) {
-				counter = 0;
-				measure0 = tripmeter();
-				pattern = 34;
-			}
-			speed = -50;
-			line_follow(speed, turn, gyro_sensor);
-			break;
-
-		case 34: /*** シーソー：200mm姿勢が安定するまでゆっくり進む ***/
-			if (tripmeter() - measure0 > 400 ) {
-				counter = 0;
-				measure0 = tripmeter();
+		case 30: /* シーソー　*/
+			if(seesaw()){
 				pattern = 100;
 			}
-			speed = 10;
-			line_follow(speed, turn, gyro_sensor);
 			break;
+
 
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			speed = 20;

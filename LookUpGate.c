@@ -139,8 +139,8 @@ int lookupgate( void )
 			break;
 	}
 	if(LUT_pattern == 90)
-		return 1;
+		return 1;	/* ルックアップゲート動作終了 */
 	else
-		return 0;
+		return 0;	/* ルックアップゲート動作中 */
 
 }
