@@ -19,6 +19,7 @@
 #include "isCourse.h"
 #include "isPosition.h"
 #include "bluetooth.h"
+#include "LookUpGate.h"
 
 /* OSEK declarations */
 DeclareCounter(SysTimerCnt);
@@ -33,8 +34,6 @@ DeclareTask(TaskLogger);
 /* sample_c2マクロ */
 #define SONAR_ALERT_DISTANCE 30 /* 超音波センサによる障害物検知距離[cm] 30*/
 /* sample_c3マクロ */
-#define TAIL_ANGLE_STAND_UP 105 /* 完全停止時の角度[度] 108*/
-#define TAIL_ANGLE_DRIVE      0 /* バランス走行時の角度[度] 3*/
 /* sample_c4マクロ */
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
@@ -48,9 +47,6 @@ DeclareTask(TaskLogger);
 
 
 /* 関数プロトタイプ宣言 */
-//static int remote_start(void);
-//static int strlen(const char *s);
-
 
 /* log用構造体 */
 typedef struct {
@@ -71,13 +67,9 @@ DATA_LOG_t data_log;
 
 static int pattern = 0; /* ロボットの状態 */
 static int sonar = 255; //超音波センサ(無探知は255)
-static int turn = 0, speed = 0; // 旋回速度、走行速度
 static int light_sensor; //超音波センサ(無探知は255)
 static int navi = 0, navi0 = 0;
-static int gyro_sensor = 255; // ジャイロセンサの値
 
-static unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
-static unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
 //*****************************************************************************
 // 関数名 : user_1ms_isr_type2
@@ -106,12 +98,10 @@ void user_1ms_isr_type2(void)
 TASK(TaskMain)
 {
 
-	signed int black = 508, white = 664; // 白の値，黒のセンサ値 
-	signed int black2 = 559, white2 = 746; // 傾倒時の白黒のセンサ値 
+//	signed int black = 508, white = 664; // 白の値，黒のセンサ値
+//	signed int black2 = 559, white2 = 746; // 傾倒時の白黒のセンサ値
 	signed int tail_angle = 0, tail_cnt = 0; // TAIL用カウンタ 
-	signed int fangle = 32; // 傾倒時のオフセット角
 	unsigned int loop_start, loop_time; // ループ時間計測用 
-	int measure0 = 0; // 距離測定用（計測スタート地点）
 
 
 	pattern = 0; //初期状態
@@ -230,113 +220,10 @@ TASK(TaskMain)
 			line_follow(speed, turn, gyro_sensor);
 			break;
 
-		case 20:
-			speed = 0;
-
-			line_follow(speed, turn, gyro_sensor);
-
-			tail_control(counter * 4 + 3);
-			//ecrobot_sound_tone(880, 1, 100);
-			if (counter >= 20 ) {
-				counter = 0;
-				pattern =201;
+		case 20:	/* ルックアップゲート */
+			if(lookupgate()){
+				pattern = 100;
 			}
-			break;
-
-		case 201: /*** ルックアップゲート：後ろに傾倒 ***/
-			speed = 20;
-			//tail_control(TAIL_ANGLE_STAND_UP);  // 尻尾を出す
-			//line_follow(speed, 0, GYRO_OFFSET + 2); // speed=0 turn=0 gyro_sensor = 4　で強制的に後ろに傾ける
-			nxt_motor_set_speed(NXT_PORT_C,speed, 1); /* 左モータPWM出力セット(-100～100) */
-			nxt_motor_set_speed(NXT_PORT_B,speed, 1); /* 右モータPWM出力セット(-100～100) */
-
-			if (counter > 1) { // 50ms * 5 この状態を保つ
-				counter = 0;
-				pattern =21;
-			}
-			break;
-
-		case 21: /*** ルックアップゲート：尻尾をゆっくり角度を減らして、走行体を寝かす ***/
-			speed = 0;
-			line_follow2(speed, black2, white2);
-			//tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			tail_control(TAIL_ANGLE_STAND_UP - counter - 25);
-			//ecrobot_sound_tone(880, 1, 100);
-			if (counter > (fangle - 25) ) {
-				counter = 0;
-				pattern =22;
-				measure0 = tripmeter();
-			}
-			break;
-
-		case 22:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = 0;
-			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (counter > 30 ) {
-				counter = 0;
-				pattern =23;
-				measure0 = tripmeter();
-			}
-			break;
-
-		case 23:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = 30;
-			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 300 ) {
-				counter = 0;
-				measure0 = tripmeter();
-				pattern =24;
-			}
-			break;
-
-		case 24:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = -20;
-			nxt_motor_set_speed(NXT_PORT_C, speed, 1); /* 左モータPWM出力セット(-100～100) */
-			nxt_motor_set_speed(NXT_PORT_B, speed, 1); /* 右モータPWM出力セット(-100～100) */
-
-//			line_follow3(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 < -250 ) {
-				counter = 0;
-				pattern =25;
-				measure0 = tripmeter();
-			}
-			break;
-		case 25:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = 30;
-
-			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 300 ) {
-				counter = 0;
-				pattern =26;
-				measure0 = tripmeter();
-			}
-			break;
-
-		case 26:/***  ***/
-			speed = 0;
-			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle + counter/2 );
-			if (counter > 64 ) {
-					counter = 0;
-					pattern =27;
-					measure0 = tripmeter();
-				}
-			break;
-
-		case 27:/***  ***/
-			speed = 20;
-			line_follow2(speed, black2, white2);
-			//line_follow(speed, turn, gyro_sensor);
-			tail_control(TAIL_ANGLE_STAND_UP);
-			if (tripmeter() - measure0 > 420 ) {
-				counter = 0;
-				pattern =101;
-				measure0 = tripmeter();
-				}
 			break;
 
 		case 30: /*** シーソー：200mm速度を落としてアプローチ ***/

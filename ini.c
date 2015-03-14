@@ -16,6 +16,9 @@
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 
+int gyro_sensor = 255; // ジャイロセンサの値
+unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
+unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 
 //*****************************************************************************
 // 関数名 : ecrobot_device_initialize

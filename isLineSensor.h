@@ -21,6 +21,8 @@
 
 extern float kp;
 extern int course; /* 走行するコース IN or OUT */
+extern int black, white; // 白の値，黒のセンサ値
+extern int black2, white2; // 傾倒時の白黒のセンサ値
 
 float pid_control(int sensor_val, int target_val);
 void calibration(int *black,int *white,int angle);

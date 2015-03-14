@@ -15,6 +15,8 @@
 #include "isLineSensor.h"
 #include "isPosition.h"
 
+int measure0 = 0; // 距離測定用（計測スタート地点）
+
 //*****************************************************************************
 // 関数名 : tripmeter
 // 引数 : なし	NXT_PORT_C(左), NXT_PORT_B(右)
