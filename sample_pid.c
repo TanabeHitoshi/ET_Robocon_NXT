@@ -40,15 +40,6 @@ DeclareTask(TaskLogger);
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
-/* PID制御マクロ */
-
-#define KP 0.7	//0.38
-#define KI 0.0	//0.06
-#define KD 0.1
-
-
-
-/* 関数プロトタイプ宣言 */
 
 /* log用構造体 */
 typedef struct {
