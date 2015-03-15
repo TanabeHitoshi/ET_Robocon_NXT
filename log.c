@@ -120,6 +120,7 @@ TASK(TaskLogger)
 
 	display_update();
 
+
 	//ecrobot_sound_tone(880, 2, 100);
 	TerminateTask();
 }//TaskLogger
