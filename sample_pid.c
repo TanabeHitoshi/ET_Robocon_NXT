@@ -35,19 +35,11 @@ DeclareTask(Task1);
 /* sample_c2マクロ */
 #define SONAR_ALERT_DISTANCE 30 /* 超音波センサによる障害物検知距離[cm] 30*/
 /* sample_c3マクロ */
-/* sample_c4マクロ */
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
 
-
-
-/* PID制御用 */
-
-
-
 static int light_sensor; //超音波センサ(無探知は255)
-
 
 //*****************************************************************************
 // タスク名 : TaskMain
@@ -56,17 +48,13 @@ static int light_sensor; //超音波センサ(無探知は255)
 TASK(TaskMain)
 {
 
-//	signed int black = 508, white = 664; // 白の値，黒のセンサ値
-//	signed int black2 = 559, white2 = 746; // 傾倒時の白黒のセンサ値
 	signed int tail_angle = 0, tail_cnt = 0; // TAIL用カウンタ 
 	unsigned int loop_start, loop_time; // ループ時間計測用 
-
 
 	pattern = 0; //初期状態
 
 	xsprintf(tx_buf,"**** HELLO! ****\n");
 	ecrobot_send_bt(tx_buf,0, strlen(tx_buf)) ;
-
 
 	while(1) {
 		if (tripmeter() > 19800 && pattern < 100) pattern = 100;/*19.9mでストップ*/
@@ -216,8 +204,3 @@ TASK(TaskMain)
 }//TASK MAIN
 
 ///////////////////////////////////////////////////////////////////////////////
-
-
-///////////////////////////////////////////////////////////////////////////////
-
-
