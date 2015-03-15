@@ -16,6 +16,8 @@
 #define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 
+DeclareCounter(SysTimerCnt);
+
 int gyro_sensor = 255; // ジャイロセンサの値
 unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
@@ -59,3 +61,24 @@ void ecrobot_device_terminate()
 	ecrobot_term_sonar_sensor(NXT_PORT_S2); /* 超音波センサ(I2C通信)を終了 */
 	ecrobot_term_bt_connection(); /* Bluetooth通信を終了 */
 }
+//*****************************************************************************
+// 関数名 : user_1ms_isr_type2
+// 引数 : なし
+// 戻り値 : なし
+// 概要 : 1msec周期割り込みフック関数(OSEK ISR type2カテゴリ)
+//*****************************************************************************
+/* LEJOS OSEK hook to be invoked from an ISR in category 2 */
+void user_1ms_isr_type2(void)
+{
+	StatusType ercd;
+
+	cnt_ms++;
+
+	ercd = SignalCounter(SysTimerCnt); /* Increment OSEK Alarm Counter */
+	if (ercd != E_OK)
+	{
+		ShutdownOS(ercd);
+	}
+}
+
+

@@ -24,7 +24,7 @@
 #include "Garage.h"
 
 /* OSEK declarations */
-DeclareCounter(SysTimerCnt);
+
 DeclareTask(Task1);
 DeclareTask(TaskLogger);
 
@@ -62,27 +62,6 @@ static int pattern = 0; /* ロボットの状態 */
 static int sonar = 255; //超音波センサ(無探知は255)
 static int light_sensor; //超音波センサ(無探知は255)
 static int navi = 0, navi0 = 0;
-
-//*****************************************************************************
-// 関数名 : user_1ms_isr_type2
-// 引数 : なし
-// 戻り値 : なし
-// 概要 : 1msec周期割り込みフック関数(OSEK ISR type2カテゴリ)
-//*****************************************************************************
-/* LEJOS OSEK hook to be invoked from an ISR in category 2 */
-void user_1ms_isr_type2(void)
-{
-	StatusType ercd;
-
-	cnt_ms++;
-
-	ercd = SignalCounter(SysTimerCnt); /* Increment OSEK Alarm Counter */
-	if (ercd != E_OK)
-	{
-		ShutdownOS(ercd);
-	}
-}
-
 
 //*****************************************************************************
 // タスク名 : TaskMain
