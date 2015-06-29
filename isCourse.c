@@ -68,13 +68,13 @@ int check_course(int distance)
 	int i, found = CMAX - 1;
 
 	for (i=0; i<CMAX; i++) {
-		if (course == IN) { //in
+		if (course == R_course) { //in
 			if (distance < in_course[i].distance) {
 				found = i-1;
 				//printf("found...%d trip:%d\n",found,distance);
 				break;
 			}
-		} else if (course == OUT){ //out
+		} else if (course == L_course){ //out
 			if (distance < out_course[i].distance) {
 				found = i-1;
 				//printf("out\n");

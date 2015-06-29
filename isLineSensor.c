@@ -64,8 +64,8 @@ float pid_control(int sensor_val, int target_val)
 	d = KD * (diff[1] - diff[0]) / DELTA_T;
 	//xsprintf(tx_buf,"pid:s=%d,t=%d,pid=%d\n",sensor_val,target_val,(int)(p+i+d));
 	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
-	if (course == OUT) 	return  -math_limit(p + i + d, -100.0, 100.0);
-	else return  math_limit(p + i + d, -100.0, 100.0);
+	if (course == L_course) 	return  -math_limit(p + i + d, -100.0, 100.0);
+	else return  -math_limit(p + i + d, -100.0, 100.0);
 }
 //*****************************************************************************
 // ä÷êîñº : calibration

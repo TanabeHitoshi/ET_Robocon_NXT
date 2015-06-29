@@ -42,10 +42,10 @@ int remote_start(void)
 	if (rx_len > 0) {
 		/* 受信データあり */
 		if (rx_buf[0] == 'i' || rx_buf[0] == 'I') {
-			start = IN; /* IN 走行開始 */
+			start = R_course; /* IN 走行開始 */
 		}
 		if (rx_buf[0] == 'o' || rx_buf[0] == 'O') {
-			start = OUT; /* OUT 走行開始 */
+			start = L_course; /* OUT 走行開始 */
 		}
 		if (rx_buf[0] == 't' || rx_buf[0] == 'T') {
 			start = TEST; /* OUT 走行開始 */

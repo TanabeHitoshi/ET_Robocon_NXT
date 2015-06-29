@@ -15,8 +15,8 @@
 #define KD 0.1
 /* インコース、アウトコース */
 #define CMAX 10
-#define IN 1
-#define OUT 2
+#define R_course 1
+#define L_course 2
 #define TEST 3 //テストコース
 
 extern float kp;

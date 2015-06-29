@@ -49,7 +49,7 @@ TASK(TaskLogger)
 {
 	counter++;
 
-	//if (course == OUT || course == TEST || course == 0) {
+	//if (course == L_course || course == TEST || course == 0) {
 		sonar = ecrobot_get_sonar_sensor(NXT_PORT_S2);
 	//	if ( sonar < 0 ) sonar = 255;
 	//} else {
@@ -58,7 +58,7 @@ TASK(TaskLogger)
 
 	if(pattern > 10 && pattern <= 101) { //‘–s’†‚Ì‚Æ‚«
 		navi = check_course(tripmeter());
-		if(navi0 != navi) ecrobot_sound_tone(440*4, 200, 100);
+//		if(navi0 != navi) ecrobot_sound_tone(440*4, 200, 100);
 
 		data_log.distance = tripmeter();
 		data_log.pattern = pattern;
@@ -71,9 +71,9 @@ TASK(TaskLogger)
 		data_log.y = (int)now.y;
 		data_log.dir = (int)now.dir;
 
-		if (course == IN) {
+		if (course == R_course) {
 			data_log.state = in_course[navi].state;
-		} else if(course == OUT){
+		} else if(course == L_course){
 			data_log.state = out_course[navi].state;
 		} else {
 			data_log.state = test_course[navi].state;

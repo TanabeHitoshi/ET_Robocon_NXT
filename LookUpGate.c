@@ -28,13 +28,14 @@
 int lookupgate( void )
 {
 	static unsigned int LUT_pattern = 10;
+	signed int fangle = 50; // 傾倒時のオフセット角
 
 	switch(LUT_pattern){
 		case 10:
 			speed = 0;
 			line_follow(speed, turn, gyro_sensor);
 			tail_control(counter * 4 + 3);
-			//ecrobot_sound_tone(880, 1, 100);
+			//ecrobot_sound_tone(440, 1, 100);
 			if (counter >= 20 ) {
 				counter = 0;
 				LUT_pattern =20;
@@ -42,15 +43,16 @@ int lookupgate( void )
 			break;
 
 		case 20: /*** ルックアップゲート：後ろに傾倒 ***/
-			speed = 20;
+			speed = 30;
 			//tail_control(TAIL_ANGLE_STAND_UP);  // 尻尾を出す
 			//line_follow(speed, 0, GYRO_OFFSET + 2); // speed=0 turn=0 gyro_sensor = 4　で強制的に後ろに傾ける
+			//ecrobot_sound_tone(660, 1, 100);
 			nxt_motor_set_speed(NXT_PORT_C,speed, 1); /* 左モータPWM出力セット(-100～100) */
 			nxt_motor_set_speed(NXT_PORT_B,speed, 1); /* 右モータPWM出力セット(-100～100) */
 
 			if (counter > 1) { // 50ms * 5 この状態を保つ
 				counter = 0;
-				LUT_pattern =30;
+				LUT_pattern = 30;
 			}
 			break;
 
@@ -82,7 +84,7 @@ int lookupgate( void )
 			speed = 30;
 			line_follow2(speed, black2, white2);
 			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 300 ) {
+			if (tripmeter() - measure0 > 400 ) {
 				counter = 0;
 				measure0 = tripmeter();
 				LUT_pattern =60;
@@ -90,13 +92,13 @@ int lookupgate( void )
 			break;
 
 		case 60:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = -20;
+			speed = -30;
 			nxt_motor_set_speed(NXT_PORT_C, speed, 1); /* 左モータPWM出力セット(-100～100) */
 			nxt_motor_set_speed(NXT_PORT_B, speed, 1); /* 右モータPWM出力セット(-100～100) */
 
 		//			line_follow3(speed, black2, white2);
 			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 < -250 ) {
+			if (tripmeter() - measure0 < -350 ) {
 				counter = 0;
 				LUT_pattern =70;
 				measure0 = tripmeter();
@@ -108,7 +110,7 @@ int lookupgate( void )
 
 			line_follow2(speed, black2, white2);
 			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 300 ) {
+			if (tripmeter() - measure0 > 400 ) {
 				counter = 0;
 				LUT_pattern =80;
 				measure0 = tripmeter();

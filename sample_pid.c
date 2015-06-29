@@ -50,7 +50,9 @@ TASK(TaskMain)
 
 	signed int tail_angle = 0, tail_cnt = 0; // TAIL用カウンタ 
 	unsigned int loop_start, loop_time; // ループ時間計測用 
+//	signed int fangle = 40; // 傾倒時のオフセット角
 
+	ecrobot_device_initialize();
 	pattern = 0; //初期状態
 
 	xsprintf(tx_buf,"**** HELLO! ****\n");
@@ -86,26 +88,26 @@ TASK(TaskMain)
 			
 			course = remote_start();
 			if (course  > 0 && sonar == 255) {
-				course = OUT;
+				course = L_course;
 				ecrobot_sound_tone(880, 170, 100);
 				pattern = 10;
 				break;
 			} else if (course > 0 ) {
-				course = IN;
+				course = R_course;
 				ecrobot_sound_tone(220, 170, 100);
 				pattern = 10;
 				break; /* リモートスタート */
 			}
 
 			if (ecrobot_get_touch_sensor(NXT_PORT_S4) == 1 && sonar < 150) {
-				course = IN;
+				course = R_course;
 				ecrobot_sound_tone(880, 170, 100);
 				systick_wait_ms(10); /* 10msecウェイト */
 				pattern = 10;
 				break; /* タッチセンサが押された */
 			}
 			if (ecrobot_get_touch_sensor(NXT_PORT_S4) == 1 && sonar == 255) {
-				course = OUT;
+				course = L_course;
 				ecrobot_sound_tone(440, 170, 100);
 				systick_wait_ms(10); /* 10msecウェイト */
 				pattern = 10;
@@ -134,19 +136,27 @@ TASK(TaskMain)
 				tail_angle--;
 				speed = 10; // テールアップ中はこの速度
 			} else {
-				speed = 100; // 通常はこの速度
+				speed = 80; // 通常はこの速度
 			}
 			tail_control(tail_angle); // バランス走行用角度に制御
 
-			if (sonar < 30 && tripmeter()> 11000 && course == OUT) // ルックアップゲート検知ならpattern=20 16000
-			{
-				pattern = 20;
+	//		if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+	//		{
+	//			pattern = 12;
+	//			counter = 0;
+	//			ecrobot_sound_tone(880, 170, 100);
+	//			break;
+	//		}
+		if (tripmeter()> 500 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+		{
+				pattern = 30;
 				counter = 0;
+				ecrobot_sound_tone(880, 170, 100);
 				break;
-			}
+		}
 #if 1
-			if((tripmeter() > 10200) && ( course == IN) ){
-//			if((tripmeter() > 400) && ( course == IN) ){
+//			if((tripmeter() > 10200) && ( course == R_course) ){
+			if((tripmeter() > 500) && ( course == R_course) ){
 			counter = 0;
 					pattern = 40;
 					ecrobot_sound_tone(440 * 3, 200, 100);
@@ -166,13 +176,128 @@ TASK(TaskMain)
 			line_follow(speed, turn, gyro_sensor);
 			break;
 
-		case 20:	/* ルックアップゲート */
-			if(lookupgate()){
-				pattern = 100;
+		case 12://L 第2区間
+			speed = 80; // 通常はこの速度
+			if (tripmeter()> 4710 && course == L_course)
+			{
+				pattern = 13;
+				counter = 0;
+				ecrobot_sound_tone(880, 170, 100);
+				break;
 			}
+			line_follow(speed, turn, gyro_sensor);
 			break;
 
-		case 30: /* シーソー　*/
+		case 13://L 第3区間
+				speed = 60; // 通常はこの速度
+				if (tripmeter()> 5390 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+				{
+					pattern = 14;
+					counter = 0;
+					ecrobot_sound_tone(880, 170, 100);
+					break;
+				}
+				line_follow(speed, turn, gyro_sensor);
+				break;
+
+		case 14://L 第4区間
+				speed = 80; // 通常はこの速度
+				if (tripmeter()> 6534 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+				{
+					pattern = 15;
+					counter = 0;
+					ecrobot_sound_tone(880, 170, 100);
+					break;
+				}
+				line_follow(speed, turn, gyro_sensor);
+				break;
+
+		case 15://L 第5区間
+				speed = 60; // 通常はこの速度
+				if (tripmeter()> 7774 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+				{
+					pattern = 16;
+					counter = 0;
+					ecrobot_sound_tone(880, 170, 100);
+					break;
+				}
+				line_follow(speed, turn, gyro_sensor);
+				break;
+		case 16://L 第6区間
+				speed = 80; // 通常はこの速度
+				if (tripmeter()> 8937 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+				{
+					pattern = 100;
+					counter = 0;
+					ecrobot_sound_tone(880, 170, 100);
+					break;
+				}
+				line_follow(speed, turn, gyro_sensor);
+				break;
+
+		case 21://R 第2区間
+					speed = 20; // 通常はこの速度
+					if (tripmeter()> 4969 && course == R_course)
+					{
+						pattern = 22;
+						counter = 0;
+						ecrobot_sound_tone(440, 170, 100);
+						break;
+					}
+					line_follow(speed, turn, gyro_sensor);
+					break;
+
+		case 22://R 第3区間
+					speed = 60; // 通常はこの速度
+					if (tripmeter()> 6294 && course == R_course)
+					{
+						pattern = 23;
+						counter = 0;
+						ecrobot_sound_tone(440, 170, 100);
+						break;
+					}
+					line_follow(speed, turn, gyro_sensor);
+					break;
+
+		case 23://R 第4区間
+					speed = 20; // 通常はこの速度
+					if (tripmeter()> 7433 && course == R_course)
+					{
+						pattern = 24;
+						counter = 0;
+						ecrobot_sound_tone(440, 170, 100);
+						break;
+					}
+					line_follow(speed, turn, gyro_sensor);
+					break;
+
+		case 24://R 第5区間
+					speed = 60; // 通常はこの速度
+					if (tripmeter()> 9019 && course == R_course)
+					{
+						pattern = 100;
+						counter = 0;
+						ecrobot_sound_tone(440, 170, 100);
+						break;
+					}
+					line_follow(speed, turn, gyro_sensor);
+					break;
+
+		case 30:/* ルックアップゲート */
+			line_follow(speed, turn, gyro_sensor);
+			speed = 40;
+			if(sonar < 30 ){
+				speed = 0;
+				counter = 0;
+				pattern = 31;
+			}
+			break;
+		case 31:	/* ルックアップゲート */
+			if(lookupgate()){
+					pattern = 100;
+				}
+				break;
+		case 300: /* シーソー　*/
 			if(seesaw()){
 				pattern = 100;
 			}
@@ -201,6 +326,6 @@ TASK(TaskMain)
 		//systick_wait_ms(4);
 	}//while
 
-}//TASK MAIN
+}//TASK MAR_course
 
 ///////////////////////////////////////////////////////////////////////////////
