@@ -136,17 +136,14 @@ TASK(TaskMain)
 				tail_angle--;
 				speed = 10; // テールアップ中はこの速度
 			} else {
-				speed = 80; // 通常はこの速度
+				speed = 120; // 通常はこの速度
+				kp = 0.5;
+				ki = KI;
+				kd = KD;
 			}
 			tail_control(tail_angle); // バランス走行用角度に制御
 
 	//		if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
-	//		{
-	//			pattern = 12;
-	//			counter = 0;
-	//			ecrobot_sound_tone(880, 170, 100);
-	//			break;
-	//		}
 		if (tripmeter()> 500 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 		{
 				pattern = 30;
@@ -154,30 +151,21 @@ TASK(TaskMain)
 				ecrobot_sound_tone(880, 170, 100);
 				break;
 		}
-#if 1
 //			if((tripmeter() > 10200) && ( course == R_course) ){
-			if((tripmeter() > 500) && ( course == R_course) ){
-			counter = 0;
-					pattern = 40;
-					ecrobot_sound_tone(440 * 3, 200, 100);
+			if((tripmeter() > 2500) && ( course == R_course) ){
+				counter = 0;
+				pattern = 40;
+				ecrobot_sound_tone(440 * 3, 200, 100);
 			}
-#endif
-
 			//if(tripmeter()==17000) ecrobot_sound_tone(440 * 3, 200, 100); // 17000
-#if 0
-			if (tripmeter() > 10000) { //シーソー直前のマーカーに近づいたら、マーカー検知 20000
-				if (check_marker(turn)>0) {
-					counter = 0;
-					measure0 = tripmeter();
-					pattern = 30;
-				}
-			}
-#endif
 			line_follow(speed, turn, gyro_sensor);
 			break;
 
 		case 12://L 第2区間
 			speed = 80; // 通常はこの速度
+			kp = KP;
+			ki = KI;
+			kd = KD;
 			if (tripmeter()> 4710 && course == L_course)
 			{
 				pattern = 13;
@@ -190,6 +178,9 @@ TASK(TaskMain)
 
 		case 13://L 第3区間
 				speed = 60; // 通常はこの速度
+				kp = KP;
+				ki = KI;
+				kd = KD;
 				if (tripmeter()> 5390 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 				{
 					pattern = 14;
@@ -202,6 +193,9 @@ TASK(TaskMain)
 
 		case 14://L 第4区間
 				speed = 80; // 通常はこの速度
+				kp = KP;
+				ki = KI;
+				kd = KD;
 				if (tripmeter()> 6534 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 				{
 					pattern = 15;
@@ -214,6 +208,9 @@ TASK(TaskMain)
 
 		case 15://L 第5区間
 				speed = 60; // 通常はこの速度
+				kp = KP;
+				ki = KI;
+				kd = KD;
 				if (tripmeter()> 7774 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 				{
 					pattern = 16;
@@ -225,6 +222,9 @@ TASK(TaskMain)
 				break;
 		case 16://L 第6区間
 				speed = 80; // 通常はこの速度
+				kp = KP;
+				ki = KI;
+				kd = KD;
 				if (tripmeter()> 8937 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 				{
 					pattern = 100;
@@ -237,6 +237,9 @@ TASK(TaskMain)
 
 		case 21://R 第2区間
 					speed = 20; // 通常はこの速度
+					kp = KP;
+					ki = KI;
+					kd = KD;
 					if (tripmeter()> 4969 && course == R_course)
 					{
 						pattern = 22;
@@ -249,6 +252,9 @@ TASK(TaskMain)
 
 		case 22://R 第3区間
 					speed = 60; // 通常はこの速度
+					kp = KP;
+					ki = KI;
+					kd = KD;
 					if (tripmeter()> 6294 && course == R_course)
 					{
 						pattern = 23;
@@ -261,6 +267,9 @@ TASK(TaskMain)
 
 		case 23://R 第4区間
 					speed = 20; // 通常はこの速度
+					kp = KP;
+					ki = KI;
+					kd = KD;
 					if (tripmeter()> 7433 && course == R_course)
 					{
 						pattern = 24;
@@ -273,6 +282,9 @@ TASK(TaskMain)
 
 		case 24://R 第5区間
 					speed = 60; // 通常はこの速度
+					kp = KP;
+					ki = KI;
+					kd = KD;
 					if (tripmeter()> 9019 && course == R_course)
 					{
 						pattern = 100;

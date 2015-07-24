@@ -15,6 +15,9 @@
 #include "isLineSensor.h"
 
 float kp = KP;
+float ki = KI;
+float kd = KD;
+
 int course = 0; /* 走行するコース IN or OUT */
 int black = 508, white = 664; // 白の値，黒のセンサ値
 int black2 = 559, white2 = 746; // 傾倒時の白黒のセンサ値
@@ -60,8 +63,8 @@ float pid_control(int sensor_val, int target_val)
 	integral += (diff[1] + diff[0]) / 2.0 * DELTA_T;
 
 	p = kp * diff[1];
-	i = KI * integral;
-	d = KD * (diff[1] - diff[0]) / DELTA_T;
+	i = ki * integral;
+	d = kd * (diff[1] - diff[0]) / DELTA_T;
 	//xsprintf(tx_buf,"pid:s=%d,t=%d,pid=%d\n",sensor_val,target_val,(int)(p+i+d));
 	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
 	if (course == L_course) 	return  -math_limit(p + i + d, -100.0, 100.0);

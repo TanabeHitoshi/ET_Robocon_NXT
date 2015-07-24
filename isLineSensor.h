@@ -20,6 +20,8 @@
 #define TEST 3 //テストコース
 
 extern float kp;
+extern float ki;
+extern float kd;
 extern int course; /* 走行するコース IN or OUT */
 extern int black, white; // 白の値，黒のセンサ値
 extern int black2, white2; // 傾倒時の白黒のセンサ値
