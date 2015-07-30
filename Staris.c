@@ -34,7 +34,8 @@ int stairs( void )
 
 	switch(ST_pattern){
 		case 10:/* 段差直前のトレース 速度を落として走行 */
-			speed = 20;
+			speed = 40;//20
+			kp = 0.5;
 //			tail_control(TAIL_ANGLE_STAND_UP - 25);
 			if( check_Seesaw(gyro_sensor) > 2 ){
 				counter = 0;
