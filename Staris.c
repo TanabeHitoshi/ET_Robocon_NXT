@@ -30,7 +30,8 @@ int stairs( void )
 {
 	static unsigned int ST_pattern = 10;
 
-	pattern = pattern * 100 + ST_pattern;
+//	pattern = pattern * 100 + ST_pattern;
+	pattern += ST_pattern;
 
 	switch(ST_pattern){
 		case 10:/* 段差直前のトレース 速度を落として走行 */
@@ -195,7 +196,8 @@ int stairs( void )
 			break;
 	}
 
-	pattern = pattern / 100;
+//	pattern = pattern / 100;
+	pattern = 400;
 
 	if(ST_pattern == 150)
 		return 1;	/* 階段動作終了 */

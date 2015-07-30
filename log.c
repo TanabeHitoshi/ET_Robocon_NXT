@@ -56,7 +56,7 @@ TASK(TaskLogger)
 	//	sonar = 255;
 	//}
 
-	if(pattern > 10 && pattern <= 101) { //‘–s’†‚Ì‚Æ‚«
+	if(pattern >= 10 && pattern <= 101) { //‘–s’†‚Ì‚Æ‚«
 		navi = check_course(tripmeter());
 //		if(navi0 != navi) ecrobot_sound_tone(440*4, 200, 100);
 
@@ -80,7 +80,7 @@ TASK(TaskLogger)
 		}
 		navi0 = navi;
 
-		xsprintf(tx_buf,"%6d,%4d,%4d,%4d,%c,%6d,%6d,%4d,%4d \n",
+		xsprintf(tx_buf,"%6d,%6d,%4d,%4d,%c,%6d,%6d,%4d,%4d \n",
 				data_log.distance,
 				data_log.pattern,
 				data_log.speed,

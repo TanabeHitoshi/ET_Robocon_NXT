@@ -136,14 +136,17 @@ TASK(TaskMain)
 				tail_angle--;
 			}
 			speed = 60; // 通常はこの速度
-			kp = 0.2;
+//			kp = 0.2;
+kp=KP;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 
 			tail_control(tail_angle); // バランス走行用角度に制御
 			if (tripmeter()> 400 ) {
-				pattern = 11;
+				counter = 0;
+pattern = 400;
+//				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
@@ -171,9 +174,8 @@ TASK(TaskMain)
 		}
 //			if((tripmeter() > 10200) && ( course == R_course) ){
 			if((tripmeter() > 4032) && ( course == R_course) ){
-pattern = 2000;
 				counter = 0;
-//				pattern = 21;//27.90　Ｒ
+				pattern = 21;//27.90　Ｒ
 				ecrobot_sound_tone(440 * 3, 200, 100);
 			}
 			//if(tripmeter()==17000) ecrobot_sound_tone(440 * 3, 200, 100); // 17000
@@ -333,7 +335,7 @@ pattern = 2000;
 			}
 			break;
 
-		case 40:/* 段差直前のトレース速度を落として走行 */
+		case 400:/* 段差直前のトレース速度を落として走行 */
 			if(stairs()){
 				pattern = 100;
 			}
