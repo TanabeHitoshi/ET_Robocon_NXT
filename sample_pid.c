@@ -145,7 +145,7 @@ kp=KP;
 			tail_control(tail_angle); // バランス走行用角度に制御
 			if (tripmeter()> 400 ) {
 				counter = 0;
-pattern = 400;
+pattern = 40;
 //				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
@@ -335,7 +335,7 @@ pattern = 400;
 			}
 			break;
 
-		case 400:/* 段差直前のトレース速度を落として走行 */
+		case 40:/* 段差直前のトレース速度を落として走行 */
 			if(stairs()){
 				pattern = 100;
 			}

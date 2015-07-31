@@ -20,6 +20,7 @@
 #include "bluetooth.h"
 #include "LookUpGate.h"
 
+
 //*****************************************************************************
 // 関数名 : staris
 // 引数 : 無し
@@ -28,14 +29,10 @@
 //*****************************************************************************
 int stairs( void )
 {
-	static unsigned int ST_pattern = 10;
-
-//	pattern = pattern * 100 + ST_pattern;
-	pattern += ST_pattern;
 
 	switch(ST_pattern){
 		case 10:/* 段差直前のトレース 速度を落として走行 */
-			speed = 40;//20
+			speed = 20;//20
 			kp = 0.5;
 //			tail_control(TAIL_ANGLE_STAND_UP - 25);
 			if( check_Seesaw(gyro_sensor) > 2 ){
@@ -47,9 +44,9 @@ int stairs( void )
 			break;
 
 		case 20:/* 段差検知、速度を上げて登る */
-			speed = 100;
+			speed = 200;
 			line_follow(speed, 0, gyro_sensor + 10);
-			if (tripmeter() - measure0 > 30 ){
+			if (tripmeter() - measure0 > 10 ){
 				counter = 0;
 				ST_pattern = 30;
 			}
@@ -195,9 +192,6 @@ int stairs( void )
 				}
 			break;
 	}
-
-//	pattern = pattern / 100;
-	pattern = 400;
 
 	if(ST_pattern == 150)
 		return 1;	/* 階段動作終了 */

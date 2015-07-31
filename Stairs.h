@@ -8,6 +8,8 @@
 #ifndef STARIS_H_
 #define STARIS_H_
 
+
+
 int stairs( void );
 
 #endif

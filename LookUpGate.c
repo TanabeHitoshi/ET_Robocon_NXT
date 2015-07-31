@@ -27,10 +27,10 @@
 //*****************************************************************************
 int lookupgate( void )
 {
-	static unsigned int LUT_pattern = 10;
+
 	signed int fangle = 50; // 傾倒時のオフセット角
 
-	pattern = pattern * 100 +LUT_pattern;
+//	pattern = pattern * 100 +LUT_pattern;
 
 	switch(LUT_pattern){
 		case 10:
@@ -143,7 +143,7 @@ int lookupgate( void )
 			break;
 	}
 
-	pattern = pattern /100;
+//	pattern = pattern /100;
 
 	if(LUT_pattern == 90)
 		return 1;	/* ルックアップゲート動作終了 */

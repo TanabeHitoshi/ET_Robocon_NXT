@@ -13,7 +13,7 @@
 #include "balancer.h" /* 倒立振子制御用ヘッダファイル */
 #include "ini.h"
 
-#define DEVICE_NAME       "ET315"  /* Bluetooth通信用デバイス名 */
+#define DEVICE_NAME       "ET005"  /* Bluetooth通信用デバイス名 */
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 
 /* OSEK declarations */
@@ -23,6 +23,8 @@ int gyro_sensor = 255; // ジャイロセンサの値
 unsigned int counter=0; /* TaskLoggerにより 50ms ごとにカウントアップ */
 unsigned int cnt_ms=0; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 int pattern = 0; /* ロボットの状態 */
+int ST_pattern = 10;/* 段差部分でのロボット状態 */
+int LUT_pattern = 10; /*ルックアップゲート */
 int sonar = 255; //超音波センサ(無探知は255)
 int navi = 0, navi0 = 0;
 

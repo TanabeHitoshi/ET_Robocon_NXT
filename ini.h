@@ -12,6 +12,8 @@ extern int gyro_sensor; // ジャイロセンサの値
 extern unsigned int counter; /* TaskLoggerにより 50ms ごとにカウントアップ */
 extern unsigned int cnt_ms; /* OSEKフック関数により 1ms？ ごとにカウントアップ */
 extern int pattern; /* ロボットの状態 */
+extern int ST_pattern; /* 段差部分でのロボット状態 */
+extern int LUT_pattern; /*ルックアップゲート */
 extern int sonar; //超音波センサ(無探知は255)
 extern int navi, navi0;
 

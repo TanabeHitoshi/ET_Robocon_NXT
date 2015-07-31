@@ -80,15 +80,18 @@ TASK(TaskLogger)
 		}
 		navi0 = navi;
 
-		xsprintf(tx_buf,"%6d,%6d,%4d,%4d,%c,%6d,%6d,%4d,%4d \n",
+		xsprintf(tx_buf,"%6d,%6d,%4d,%4d,%6d,%6d,%6d,%4d,%4d \n",
 				data_log.distance,
 				data_log.pattern,
 				data_log.speed,
 				data_log.turn,
-				data_log.state,
-				data_log.x,
+				ST_pattern,
+				LUT_pattern,
+//				data_log.state,
+//				data_log.x,
 				data_log.y,
-				data_log.dir,
+//				data_log.dir,
+				gyro_sensor,
 				sonar
 		);
 
