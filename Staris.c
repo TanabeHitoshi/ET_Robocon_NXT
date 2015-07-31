@@ -57,57 +57,57 @@ int stairs( void )
 			line_follow(speed, 5, gyro_sensor);
 			if (counter > 50 ){
 				counter = 0;
-//				ST_pattern = 40;
-				ST_pattern = 90;
+				ST_pattern = 40;
+//				ST_pattern = 90;
 			}
 			break;
 
 		case 40:/* ラインの検出しながら前へ */
-			kp = 0.3;
-			speed = 10;
-			line_follow(speed, turn, gyro_sensor);
-			if (tripmeter() - measure0 > 200 ){
+			speed = 5;
+			line_follow(speed, -10, gyro_sensor);
+			if(light_sensor < TH(black, white)){
 				counter = 0;
 				ST_pattern = 50;
-			}			break;
-
-		case 50:/* ラインの検出しながら前へ */
-			kp = 0.5;
-			speed = 0;
-			line_follow(speed, turn, gyro_sensor);
-			if (counter > 200 ){
-				counter = 0;
-				ST_pattern = 60;
 			}
 			break;
-		case 60:/* ラインの検出 */
-			kp = 0.3;
+		case 50:/* ラインの検出しながら前へ */
+			if ((tripmeter() - measure0) < 100 ){
+				speed = 0;		/* しばらく体制を整える */
+			}else{
+				speed = -10;	/* 前に行き過ぎていれば下がる*/
+			}
 			speed = 0;
 			line_follow(speed, turn, gyro_sensor);
-			if (ecrobot_get_light_sensor(NXT_PORT_S3) > black ){
+			if (counter > 100 ){
 				counter = 0;
-				ST_pattern = 70;
+				ST_pattern = 60;
 				measure0 = tripmeter_right();
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
 
-		case 70:/* ターン */
+		case 60:/* ターン */
 			turn_left_gyro(0, 0, gyro_sensor);
 			if (tripmeter_right() - measure0 > (502 - 20) ){
 				counter = 0;
-				ST_pattern = 80;
+				ST_pattern = 70;
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
 
-		case 80:/* ラインの検出 */
-			turn_right_gyro(0, 0, gyro_sensor);
-			if (tripmeter_right() - measure0 > 60 ){
+		case 70:/* ラインの検出 */
+			speed = 5;
+			line_follow(speed, 10, gyro_sensor);
+			if(light_sensor < TH(black, white)){
 				counter = 0;
-				ST_pattern = 90;
+				ST_pattern = 80;
 			}
-			if (ecrobot_get_light_sensor(NXT_PORT_S3) > black){
+			break;
+
+		case 80:/* ラインの検出 */
+			speed = 0;
+			line_follow(speed, turn, gyro_sensor);
+			if (counter > 100 ){
 				counter = 0;
 				ST_pattern = 90;
 			}
@@ -115,8 +115,8 @@ int stairs( void )
 
 		case 90:/* 段差の検知 */
 			kp = KP;
-			speed = 40;
-			if( check_Seesaw(gyro_sensor)>2 ){
+			speed = 60;
+			if( check_Seesaw(gyro_sensor)>5 ){
 				counter = 0;
 				measure0 = tripmeter();
 				ST_pattern = 100;
@@ -140,7 +140,7 @@ int stairs( void )
 				counter = 0;
 				measure0 = tripmeter();
 				ST_pattern = 120;
-
+				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
 

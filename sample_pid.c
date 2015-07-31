@@ -39,7 +39,7 @@ DeclareTask(Task1);
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
 
-static int light_sensor; //超音波センサ(無探知は255)
+//static int light_sensor; //超音波センサ(無探知は255)
 
 //*****************************************************************************
 // タスク名 : TaskMain
