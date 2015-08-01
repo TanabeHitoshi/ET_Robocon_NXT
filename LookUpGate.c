@@ -19,6 +19,8 @@
 #include "isPosition.h"
 #include "bluetooth.h"
 
+int fangle = 50; // 傾倒時のオフセット角
+
 //*****************************************************************************
 // 関数名 : lookupgate
 // 引数 : 無し
@@ -27,10 +29,6 @@
 //*****************************************************************************
 int lookupgate( void )
 {
-
-	signed int fangle = 50; // 傾倒時のオフセット角
-
-//	pattern = pattern * 100 +LUT_pattern;
 
 	switch(LUT_pattern){
 		case 10:
@@ -137,15 +135,15 @@ int lookupgate( void )
 			tail_control(TAIL_ANGLE_STAND_UP);
 			if (tripmeter() - measure0 > 420 ) {
 				counter = 0;
-				LUT_pattern =10;
+				LUT_pattern =100;
 				measure0 = tripmeter();
 				}
 			break;
+		default:
+			break;
 	}
 
-//	pattern = pattern /100;
-
-	if(LUT_pattern == 90)
+	if(LUT_pattern == 100)
 		return 1;	/* ルックアップゲート動作終了 */
 	else
 		return 0;	/* ルックアップゲート動作中 */

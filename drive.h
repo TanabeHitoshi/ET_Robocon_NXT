@@ -22,8 +22,6 @@
 
 extern int turn;	//旋回速度
 extern int speed;	//走行速度
-extern int fangle; // 傾倒時のオフセット角
-
 
 void line_follow(int speed, int turn, int gyro);
 void line_follow2(int speed, int black, int white);

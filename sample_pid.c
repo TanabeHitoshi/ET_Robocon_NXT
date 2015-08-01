@@ -39,7 +39,6 @@ DeclareTask(Task1);
 #define PASS_KEY          "1234" /* Bluetooth通信用パスキー */
 #define CMD_START         '1'    /* リモートスタートコマンド(変更禁止) */
 
-//static int light_sensor; //超音波センサ(無探知は255)
 
 //*****************************************************************************
 // タスク名 : TaskMain
@@ -136,16 +135,17 @@ TASK(TaskMain)
 				tail_angle--;
 			}
 			speed = 60; // 通常はこの速度
+kp = KP;
 //			kp = 0.2;
-kp=KP;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 
 			tail_control(tail_angle); // バランス走行用角度に制御
-			if (tripmeter()> 400 ) {
-				counter = 0;
-pattern = 40;
+//			if (tripmeter()> 400 ) {
+			if (tripmeter()> 1000 ) {
+					counter = 0;
+pattern = 30;
 //				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
@@ -158,14 +158,14 @@ pattern = 40;
 				tail_angle--;
 //				speed = 0; // テールアップ中はこの速度
 			}
-			speed = 150 - tail_angle/2; // 通常はこの速度
+			speed = 150 - tail_angle; // 通常はこの速度
 			kp = 0.2;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 			tail_control(tail_angle); // バランス走行用角度に制御
-			if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
-	//	if (tripmeter()> 500 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+//			if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+		if (tripmeter()> 2500 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 		{
 				pattern = 12;//29.21　Ｌ
 				counter = 0;

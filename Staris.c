@@ -188,8 +188,11 @@ int stairs( void )
 			tail_control(TAIL_ANGLE_STAND_UP);
 			if (tripmeter() - measure0 > 350 ) {
 				counter = 0;
+				pattern = 160;
 				measure0 = tripmeter();
 				}
+			break;
+		default:
 			break;
 	}
 
