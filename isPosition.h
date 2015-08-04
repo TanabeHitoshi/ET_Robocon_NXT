@@ -20,7 +20,7 @@ typedef struct {
 POSITION_t now, prev = {0.0, 0.0, 0.0, 0, 0};
 
 extern int measure0; // 距離測定用（計測スタート地点）
-
+extern int measure_P; // 距離測定用（難所のスタート地点）
 
 int tripmeter(void);
 int tripmeter_left(void);

@@ -89,7 +89,8 @@ TASK(TaskLogger)
 				LUT_pattern,
 //				data_log.state,
 //				data_log.x,
-				data_log.y,
+				measure_P,
+//				data_log.y,
 //				data_log.dir,
 				gyro_sensor,
 				sonar

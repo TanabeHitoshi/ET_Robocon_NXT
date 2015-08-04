@@ -37,7 +37,7 @@ int stairs( void )
 //			tail_control(TAIL_ANGLE_STAND_UP - 25);
 			if( check_Seesaw(gyro_sensor) > 2 ){
 				counter = 0;
-				measure0 = tripmeter();
+				measure_P = measure0 = tripmeter();
 				ST_pattern = 20;
 			}
 			line_follow(speed, turn, gyro_sensor);
@@ -45,7 +45,7 @@ int stairs( void )
 
 		case 20:/* 段差検知、速度を上げて登る */
 			speed = 200;
-			line_follow(speed, 0, gyro_sensor + 10);
+			line_follow(speed, 0, gyro_sensor + 0);
 			if (tripmeter() - measure0 > 10 ){
 				counter = 0;
 				ST_pattern = 30;
@@ -88,7 +88,7 @@ int stairs( void )
 
 		case 60:/* ターン */
 			turn_left_gyro(0, 0, gyro_sensor);
-			if (tripmeter_right() - measure0 > (502 - 20) ){
+			if (tripmeter_right() - measure0 > 522 ){
 				counter = 0;
 				ST_pattern = 70;
 				ecrobot_sound_tone(880, 170, 100);
@@ -96,7 +96,7 @@ int stairs( void )
 			break;
 
 		case 70:/* ラインの検出 */
-			speed = 5;
+			speed = 10;
 			line_follow(speed, 10, gyro_sensor);
 			if(light_sensor < TH(black, white)){
 				counter = 0;
@@ -104,19 +104,10 @@ int stairs( void )
 			}
 			break;
 
-		case 80:/* ラインの検出 */
-			speed = 0;
-			line_follow(speed, turn, gyro_sensor);
-			if (counter > 100 ){
-				counter = 0;
-				ST_pattern = 90;
-			}
-			break;
-
-		case 90:/* 段差の検知 */
+		case 80:/* 段差の検知 */
 			kp = KP;
-			speed = 60;
-			if( check_Seesaw(gyro_sensor)>5 ){
+			speed = 30;
+			if( check_Seesaw(gyro_sensor)>3 || tripmeter() - measure_P > 700){
 				counter = 0;
 				measure0 = tripmeter();
 				ST_pattern = 100;
@@ -134,9 +125,9 @@ int stairs( void )
 			break;
 
 		case 110:/* マーカーを見つける*/
-			speed = 40;
+			speed = 20;
 			line_follow(speed, turn, gyro_sensor);
-			if (check_marker(turn)>0) {
+			if (check_marker(turn)>1) {
 				counter = 0;
 				measure0 = tripmeter();
 				ST_pattern = 120;
@@ -196,7 +187,7 @@ int stairs( void )
 			break;
 	}
 
-	if(ST_pattern == 150)
+	if(ST_pattern == 100)
 		return 1;	/* 階段動作終了 */
 	else
 		return 0;	/* 階段動作中 */

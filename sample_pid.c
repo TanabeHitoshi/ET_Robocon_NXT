@@ -142,10 +142,10 @@ kp = KP;
 			line_follow(speed, turn, gyro_sensor);
 
 			tail_control(tail_angle); // バランス走行用角度に制御
-//			if (tripmeter()> 400 ) {
-			if (tripmeter()> 1000 ) {
+			if (tripmeter()> 400 ) {
+//			if (tripmeter()> 1000 ) {
 					counter = 0;
-pattern = 30;
+pattern = 40;
 //				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
@@ -319,6 +319,7 @@ pattern = 30;
 			line_follow(speed, turn, gyro_sensor);
 			speed = 40;
 			if(sonar < 30 ){
+				measure_P = measure0 = tripmeter();
 				speed = 0;
 				counter = 0;
 				pattern = 31;
@@ -328,15 +329,20 @@ pattern = 30;
 			if(lookupgate()){
 					pattern = 100;
 				}
-				break;
-		case 300: /* シーソー　*/
-			if(seesaw()){
-				pattern = 100;
-			}
 			break;
 
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			if(stairs()){
+				pattern = 41;
+				measure0 = tripmeter();
+				ecrobot_sound_tone(880, 170, 100);
+			}
+			break;
+		case 41:
+			speed = 20;
+			line_follow(speed, turn, gyro_sensor);
+			if (tripmeter() - measure_P > 1500 ){
+				counter = 0;
 				pattern = 100;
 			}
 			break;

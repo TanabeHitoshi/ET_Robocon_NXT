@@ -19,7 +19,7 @@
 #include "isPosition.h"
 #include "bluetooth.h"
 
-int fangle = 50; // 傾倒時のオフセット角
+int fangle = 45; // 傾倒時のオフセット角
 
 //*****************************************************************************
 // 関数名 : lookupgate
@@ -87,7 +87,9 @@ int lookupgate( void )
 			if (tripmeter() - measure0 > 400 ) {
 				counter = 0;
 				measure0 = tripmeter();
-				LUT_pattern =60;
+				LUT_pattern =110;
+//				LUT_pattern =60;
+				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
 
@@ -139,6 +141,19 @@ int lookupgate( void )
 				measure0 = tripmeter();
 				}
 			break;
+
+		case 110:/* マーカーを見つける*/
+			speed = 30;
+			line_follow2(speed, black2, white2);
+			tail_control(TAIL_ANGLE_STAND_UP - fangle/2);
+			if (check_marker(turn)>1) {
+				counter = 0;
+				measure0 = tripmeter();
+				ST_pattern = 110;
+				ecrobot_sound_tone(880, 170, 100);
+			}
+			break;
+
 		default:
 			break;
 	}
