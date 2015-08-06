@@ -87,8 +87,7 @@ int lookupgate( void )
 			if (tripmeter() - measure0 > 400 ) {
 				counter = 0;
 				measure0 = tripmeter();
-				LUT_pattern =110;
-//				LUT_pattern =60;
+				LUT_pattern =60;
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
@@ -115,6 +114,7 @@ int lookupgate( void )
 			if (tripmeter() - measure0 > 400 ) {
 				counter = 0;
 				LUT_pattern =80;
+				ecrobot_sound_tone(880, 170, 100);
 				measure0 = tripmeter();
 			}
 			break;
@@ -122,7 +122,7 @@ int lookupgate( void )
 		case 80:/***  ***/
 			speed = 0;
 			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle + counter/2 );
+			tail_control(TAIL_ANGLE_STAND_UP - 10);//fangle + counter/2 );
 			if (counter > 64 ) {
 					counter = 0;
 					LUT_pattern =90;
@@ -131,11 +131,11 @@ int lookupgate( void )
 			break;
 
 		case 90:/***  ***/
-			speed = 20;
+			speed = 30;
 			line_follow2(speed, black2, white2);
 			//line_follow(speed, turn, gyro_sensor);
 			tail_control(TAIL_ANGLE_STAND_UP);
-			if (tripmeter() - measure0 > 420 ) {
+			if (tripmeter() - measure0 > 1500 ) {
 				counter = 0;
 				LUT_pattern =100;
 				measure0 = tripmeter();
@@ -158,7 +158,7 @@ int lookupgate( void )
 			break;
 	}
 
-	if(LUT_pattern == 100)
+	if(LUT_pattern == 90)
 		return 1;	/* ルックアップゲート動作終了 */
 	else
 		return 0;	/* ルックアップゲート動作中 */

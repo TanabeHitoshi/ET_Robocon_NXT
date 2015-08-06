@@ -145,7 +145,7 @@ kp = KP;
 			if (tripmeter()> 400 ) {
 //			if (tripmeter()> 1000 ) {
 					counter = 0;
-pattern = 40;
+pattern = 30;
 //				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
@@ -327,10 +327,26 @@ pattern = 40;
 			break;
 		case 31:	/* ルックアップゲート */
 			if(lookupgate()){
-					pattern = 100;
+					pattern = 32;
+					counter = 0;
 				}
 			break;
-
+		case 32:/***  ***/
+			speed = 25;
+			line_follow2(speed, black2, white2);
+			//line_follow(speed, turn, gyro_sensor);
+			tail_control(TAIL_ANGLE_STAND_UP - 20);
+			if (tripmeter() - measure_P > 1500 ) {
+				counter = 0;
+				pattern =33;
+				measure0 = tripmeter();
+				}
+			break;
+		case 33:/***  ***/
+			tail_control(TAIL_ANGLE_STAND_UP - 20);
+			nxt_motor_set_speed(NXT_PORT_B,0,1);
+			nxt_motor_set_speed(NXT_PORT_C,0,1);
+			break;
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			if(stairs()){
 				pattern = 41;
