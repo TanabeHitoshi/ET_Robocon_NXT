@@ -32,9 +32,6 @@ void garage( void )
 
 	switch(GG_pattern){
 		case 10: /*** 走行停止：尻尾を出しながら、一瞬加速 ***/
-			counter = 0;
-			speed = 0;
-			turn = 0;
 			GG_pattern = 20;
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
 			nxt_motor_set_speed(NXT_PORT_B,100,1);
@@ -46,18 +43,8 @@ void garage( void )
 
 		case 20: /*** 走行停止：左右モーター停止で静止状態に ***/
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
-			speed = 0;
-			//ecrobot_sound_tone(440*3, 1000, 100);
-			while (1) {
-				tail_control(TAIL_ANGLE_STAND_UP - 20);
-				nxt_motor_set_speed(NXT_PORT_B,0,1);
-				nxt_motor_set_speed(NXT_PORT_C,0,1);
-				//line_follow2(speed, black2, white2);
-				//ecrobot_sound_tone(440*3, 1000, 100);
-				//xsprintf(tx_buf,"%4d -----\n",tripmeter());
-				//ecrobot_send_bt(tx_buf,0, strlen(tx_buf)) ;
-			}
-
+			nxt_motor_set_speed(NXT_PORT_B,0,1);
+			nxt_motor_set_speed(NXT_PORT_C,0,1);
 			break;
 	}
 }

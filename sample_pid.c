@@ -124,7 +124,8 @@ TASK(TaskMain)
 			/* ソナー接続確認 */
 
 			systick_init();						/* 走行時間リセット */
-			pattern = 10;
+//			pattern = 10;
+			pattern = 3000;
 			break;
 
 		case 10: /* スタートダッシュ */
@@ -135,18 +136,15 @@ TASK(TaskMain)
 				tail_angle--;
 			}
 			speed = 60; // 通常はこの速度
-kp = KP;
-//			kp = 0.2;
+			kp = 0.2;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 
 			tail_control(tail_angle); // バランス走行用角度に制御
-			if (tripmeter()> 400 ) {
-//			if (tripmeter()> 1000 ) {
-					counter = 0;
-pattern = 30;
-//				pattern = 11;
+			if (tripmeter()> 1000 ) {
+				counter = 0;
+				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
@@ -156,7 +154,6 @@ pattern = 30;
 			if( tail_cnt > 20 && (tail_angle > 0) ){
 				tail_cnt = 0;
 				tail_angle--;
-//				speed = 0; // テールアップ中はこの速度
 			}
 			speed = 150 - tail_angle; // 通常はこの速度
 			kp = 0.2;
@@ -164,21 +161,20 @@ pattern = 30;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 			tail_control(tail_angle); // バランス走行用角度に制御
-//			if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
-		if (tripmeter()> 2500 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
-		{
+			if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+//		if (tripmeter()> 2500 && course == L_course) //
+			{
 				pattern = 12;//29.21　Ｌ
 				counter = 0;
 				ecrobot_sound_tone(880, 170, 100);
 				break;
-		}
+			}
 //			if((tripmeter() > 10200) && ( course == R_course) ){
 			if((tripmeter() > 4032) && ( course == R_course) ){
 				counter = 0;
 				pattern = 21;//27.90　Ｒ
 				ecrobot_sound_tone(440 * 3, 200, 100);
 			}
-			//if(tripmeter()==17000) ecrobot_sound_tone(440 * 3, 200, 100); // 17000
 			break;
 
 		case 12://L 第2区間
@@ -307,6 +303,20 @@ pattern = 30;
 					kd = KD;
 					if (tripmeter()> 8419 && course == R_course)
 					{
+						pattern = 25;
+						counter = 0;
+						ecrobot_sound_tone(440, 170, 100);
+						break;
+					}
+					line_follow(speed, turn, gyro_sensor);
+					break;
+		case 25://R 第6区間
+					speed = 40; // 通常はこの速度
+					kp = KP;
+					ki = KI;
+					kd = KD;
+					if (tripmeter()> 1400 && course == R_course)
+					{
 						pattern = 40;
 						counter = 0;
 						ecrobot_sound_tone(440, 170, 100);
@@ -336,7 +346,7 @@ pattern = 30;
 			line_follow2(speed, black2, white2);
 			//line_follow(speed, turn, gyro_sensor);
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
-			if (tripmeter() - measure_P > 1500 ) {
+			if (tripmeter() - measure_P > 1132 - 40 ) {
 				counter = 0;
 				pattern =33;
 				measure0 = tripmeter();
@@ -357,20 +367,83 @@ pattern = 30;
 		case 41:
 			speed = 20;
 			line_follow(speed, turn, gyro_sensor);
-			if (tripmeter() - measure_P > 1500 ){
+			if (tripmeter() - measure_P > 1000){
 				counter = 0;
-				pattern = 100;
+				pattern = 42;
 			}
 			break;
 
-		case 100: /* ガレージイン */
+		case 42: /* ガレージイン */
 			garage();
+			pattern =43;
+			break;
+		case 43:/***  ***/
+			speed = 15;
+			line_follow2(speed, black2, white2);
+			tail_control(TAIL_ANGLE_STAND_UP - 20);
+			if (tripmeter() - measure_P > 1433 - 40 ) {
+				counter = 0;
+				pattern =44;
+				measure0 = tripmeter();
+				}
+			break;
+		case 44:/***  ***/
+			tail_control(TAIL_ANGLE_STAND_UP - 20);
+			nxt_motor_set_speed(NXT_PORT_B,0,1);
+			nxt_motor_set_speed(NXT_PORT_C,0,1);
 			break;
 
 		case 2000: /* 倒立で停止 */
 			speed = 0;
 			line_follow(speed, turn, gyro_sensor);
 			break;
+		case 3000:/*テスト走行*/
+			// 走行開始直後は速度を抑えて走行しながら、ゆっくりテールを上げる
+			tail_cnt++;
+			if( tail_cnt > 10 && (tail_angle > 0) ){
+				tail_cnt = 0;
+				tail_angle--;
+			}
+			speed = 60; // 通常はこの速度
+			kp = 0.5;
+			ki = KI;
+			kd = KD;
+			line_follow(speed, turn, gyro_sensor);
+
+			tail_control(tail_angle); // バランス走行用角度に制御
+			if (tripmeter()> 400 ) {
+				counter = 0;
+				pattern = 3010;
+				ecrobot_sound_tone(880, 170, 100);
+			}
+			break;
+		case 3010: /*** 通常走行中 ***/
+			// 走行開始直後は速度を抑えて走行しながら、ゆっくりテールを上げる
+			tail_cnt++;
+			if( tail_cnt > 20 && (tail_angle > 0) ){
+				tail_cnt = 0;
+				tail_angle--;
+			}
+			speed = 60 - tail_angle; // 通常はこの速度
+			kp = 0.5;
+			ki = KI;
+			kd = KD;
+			line_follow(speed, turn, gyro_sensor);
+			tail_control(tail_angle); // バランス走行用角度に制御
+			if (tripmeter()> 100000 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
+			{
+				pattern = 12;//29.21　Ｌ
+				counter = 0;
+				ecrobot_sound_tone(880, 170, 100);
+				break;
+			}
+			if((tripmeter() > 100000) && ( course == R_course) ){
+				counter = 0;
+				pattern = 21;//27.90　Ｒ
+				ecrobot_sound_tone(440 * 3, 200, 100);
+			}
+			break;
+
 		default:
 			break;
 
