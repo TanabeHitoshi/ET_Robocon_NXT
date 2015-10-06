@@ -11,7 +11,7 @@
 #define GYRO_OFFSET 600 /* ジャイロセンサオフセット値(角速度0[deg/sec]時) 600*/
 #define KP 0.7	//0.38
 #define KI 0.0	//0.06
-#define KD 0.7
+//#define KD 0.7
 #define PWM_ABS_MAX         60 /* 完全停止用モータ制御PWM絶対最大値 60*/
 #define P_GAIN             2.5F /* 完全停止用モータ制御比例係数 2.5*/
 #define TAIL_ANGLE_STAND_UP 105 /* 完全停止時の角度[度] 108*/

@@ -40,7 +40,6 @@ float math_limit(float val, float min, float max)
 	return val;
 }
 
-
 //*****************************************************************************
 // 関数名 : pid_sample
 // 引数 : sensor_val (センサー値), target_val(目標値)
@@ -50,7 +49,6 @@ float math_limit(float val, float min, float max)
 // 滑らかで安定したライントレースを実現する」
 // http://monoist.atmarkit.co.jp/mn/articles/1007/26/news083.html
 //*****************************************************************************
-
 float pid_control(int sensor_val, int target_val)
 {
 	float p =0, i=0, d=0;

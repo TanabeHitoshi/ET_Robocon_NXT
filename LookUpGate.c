@@ -19,7 +19,8 @@
 #include "isPosition.h"
 #include "bluetooth.h"
 
-int fangle = 45; // 傾倒時のオフセット角
+int fangle = 40; // 傾倒時のオフセット角
+int fangle2 = 45;
 
 //*****************************************************************************
 // 関数名 : lookupgate
@@ -72,7 +73,7 @@ int lookupgate( void )
 		case 40:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
 			speed = 0;
 			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
+			tail_control(TAIL_ANGLE_STAND_UP - fangle2);
 			if (counter > 30 ) {
 				counter = 0;
 				LUT_pattern =50;
@@ -83,8 +84,9 @@ int lookupgate( void )
 		case 50:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
 			speed = 30;
 			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 400 ) {
+			tail_control(TAIL_ANGLE_STAND_UP - fangle2);
+			//ここでゲートまでの距離を設定する。
+			if (tripmeter() - measure0 > 250 ) {	//一回目の前進
 				counter = 0;
 				measure0 = tripmeter();
 				LUT_pattern =60;
@@ -93,13 +95,13 @@ int lookupgate( void )
 			break;
 
 		case 60:/*** ルックアップゲート：傾倒状態で30*50ミリ秒ライントレース(この状態でゲート通過) ***/
-			speed = -30;
+			speed = -20;
 			nxt_motor_set_speed(NXT_PORT_C, speed, 1); /* 左モータPWM出力セット(-100～100) */
 			nxt_motor_set_speed(NXT_PORT_B, speed, 1); /* 右モータPWM出力セット(-100～100) */
 
 		//			line_follow3(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 < -350 ) {
+			tail_control(TAIL_ANGLE_STAND_UP - fangle2);
+			if (tripmeter() - measure0 < -250 ) {	//後退の距離
 				counter = 0;
 				LUT_pattern =70;
 				measure0 = tripmeter();
@@ -110,8 +112,8 @@ int lookupgate( void )
 			speed = 30;
 
 			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - fangle);
-			if (tripmeter() - measure0 > 400 ) {
+			tail_control(TAIL_ANGLE_STAND_UP - fangle2);
+			if (tripmeter() - measure0 > 250 ) {	//二回目の前進
 				counter = 0;
 				LUT_pattern =80;
 				ecrobot_sound_tone(880, 170, 100);
@@ -122,7 +124,7 @@ int lookupgate( void )
 		case 80:/***  ***/
 			speed = 0;
 			line_follow2(speed, black2, white2);
-			tail_control(TAIL_ANGLE_STAND_UP - 10);//fangle + counter/2 );
+			tail_control(TAIL_ANGLE_STAND_UP - 20);//fangle + counter/2 );
 			if (counter > 64 ) {
 					counter = 0;
 					LUT_pattern =90;
@@ -134,7 +136,7 @@ int lookupgate( void )
 			speed = 30;
 			line_follow2(speed, black2, white2);
 			//line_follow(speed, turn, gyro_sensor);
-			tail_control(TAIL_ANGLE_STAND_UP);
+			tail_control(TAIL_ANGLE_STAND_UP - 10);
 			if (tripmeter() - measure0 > 1500 ) {
 				counter = 0;
 				LUT_pattern =100;

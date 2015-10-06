@@ -30,7 +30,7 @@ int check_Seesaw(int gyro_sensor)
 {
 	static int prev_gyro, diff_gyro, cnt_gyro = 0;
 	diff_gyro = gyro_sensor - prev_gyro;
-	if (diff_gyro > 15) {cnt_gyro++;} else {cnt_gyro = 0;}
+	if (diff_gyro > 30) {cnt_gyro++;} else {cnt_gyro = 0;}
 	prev_gyro = gyro_sensor;
 	return cnt_gyro;
 }

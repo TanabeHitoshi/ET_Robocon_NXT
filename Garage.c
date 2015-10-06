@@ -38,7 +38,7 @@ void garage( void )
 			nxt_motor_set_speed(NXT_PORT_C,100,1);
 			xsprintf(tx_buf,"%4d ---101101--\n",tripmeter());
 			ecrobot_send_bt(tx_buf,0, strlen(tx_buf)) ;
-			systick_wait_ms(200);
+			systick_wait_ms(30);
 			break;
 
 		case 20: /*** 走行停止：左右モーター停止で静止状態に ***/

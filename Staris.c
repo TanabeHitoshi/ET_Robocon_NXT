@@ -20,7 +20,6 @@
 #include "bluetooth.h"
 #include "LookUpGate.h"
 
-
 //*****************************************************************************
 // 関数名 : staris
 // 引数 : 無し
@@ -32,22 +31,36 @@ int stairs( void )
 	static int sa;
 
 	switch(ST_pattern){
+		case 5:
+			speed = 0;
+			tail_control(TAIL_ANGLE_STAND_UP - 10);
+			nxt_motor_set_speed(NXT_PORT_B,100,1);
+			nxt_motor_set_speed(NXT_PORT_C,100,1);
+			if(counter < 100){
+				ST_pattern = 15;
+				counter = 0;
+			}
+			break;
 		case 10:/* 段差直前のトレース 速度を落として走行 */
 			speed = 20;//20
-			kp = 0.5;
-//			tail_control(TAIL_ANGLE_STAND_UP - 25);
-			if( check_Seesaw(gyro_sensor) > 5 ){
+			kp = 0.7;
+			kd = 0.03;
+			tail_control(TAIL_ANGLE_STAND_UP - 40);
+//			if( check_Seesaw(gyro_sensor) > 1 && counter > 50 && (max_position() - tripmeter()) > 10){
+			if( counter > 50 && (max_position() - tripmeter()) > 10){
 				counter = 0;
-				measure_P = measure0 = tripmeter();
+				measure_P = tripmeter();
 				measure_L = tripmeter_left();
 				measure_R = tripmeter_right();
 				ST_pattern = 20;
 			}
+			measure0 = tripmeter();
 			line_follow(speed, turn, gyro_sensor);
 			break;
 
 		case 20:/* 段差検知、速度を上げて登る */
-			speed = 200;
+			ecrobot_sound_tone(880, 170, 100);
+			speed = 130;
 			line_follow(speed, 0, gyro_sensor + 0);
 			if (tripmeter() - measure0 > 10 ){
 				counter = 0;
@@ -56,9 +69,9 @@ int stairs( void )
 			break;
 
 		case 30:/* 少し後ろにバックして体制を整える */
-			speed = -10;
+			speed = -5;
 			line_follow(speed, 5, gyro_sensor);
-			if (counter > 50 ){
+			if (counter > 40 ){
 				counter = 0;
 				ST_pattern = 40;
 //				ST_pattern = 90;
@@ -74,18 +87,18 @@ int stairs( void )
 			}
 			break;
 		case 50:/* ラインの検出しながら前へ */
-			if ((tripmeter() - measure_P) < 150 ){
-				speed = 0;		/* しばらく体制を整える */
+			if ((tripmeter() - measure_P) > 400 ){
+				speed = -20;		/* しばらく体制を整える */
 			}else{
-				speed = 0;	/* 前に行き過ぎていれば下がる*/
+				speed = 20;	/* 前に行き過ぎていれば下がる*/
 			}
-			speed = 0;
+//			speed = 0;
 			line_follow(speed, turn, gyro_sensor);
-			if (counter > 100 ){
+			if (counter > 50 ){
 				counter = 0;
 				ST_pattern = 60;
 				measure0 = tripmeter_right();
-				sa = 508 - ((tripmeter_right() - measure_R) - (tripmeter_left() - measure_L));
+				sa = 500 - ((tripmeter_right() - measure_R) - (tripmeter_left() - measure_L));
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
@@ -104,13 +117,23 @@ int stairs( void )
 			line_follow(speed, 10, gyro_sensor);
 			if(light_sensor < TH(black, white)){
 				counter = 0;
+				ST_pattern = 75;
+			}
+			break;
+
+		case 75:/* ラインの検出 */
+			speed = 10;
+			if( tripmeter() - measure_P > 600){
+				counter = 0;
+				measure0 = tripmeter();
 				ST_pattern = 80;
 			}
+			line_follow(speed, turn, gyro_sensor);
 			break;
 
 		case 80:/* 段差の検知 */
 			kp = KP;
-			speed = 50;
+			speed = 60;
 			if( check_Seesaw(gyro_sensor)>3 || tripmeter() - measure_P > 700){
 				counter = 0;
 				measure0 = tripmeter();

@@ -56,7 +56,7 @@ TASK(TaskLogger)
 	//	sonar = 255;
 	//}
 
-	if(pattern >= 10 && pattern <= 101) { //‘–s’†‚Ì‚Æ‚«
+	if(pattern >= 10 && pattern <= 400) { //‘–s’†‚Ì‚Æ‚«
 		navi = check_course(tripmeter());
 //		if(navi0 != navi) ecrobot_sound_tone(440*4, 200, 100);
 
@@ -79,7 +79,7 @@ TASK(TaskLogger)
 			data_log.state = test_course[navi].state;
 		}
 		navi0 = navi;
-
+#if 1
 		xsprintf(tx_buf,"%6d,%6d,%4d,%4d,%6d,%6d,%6d,%4d,%4d \n",
 				data_log.distance,
 				data_log.pattern,
@@ -93,9 +93,10 @@ TASK(TaskLogger)
 //				data_log.y,
 //				data_log.dir,
 				gyro_sensor,
+//				max_position()
 				sonar
 		);
-
+#endif
 
 		ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
 

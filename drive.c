@@ -79,8 +79,6 @@ void line_follow3(int speed, int black, int white)
 	if (pwm_R < -100) pwm_R  = -100;
 	nxt_motor_set_speed(NXT_PORT_C, pwm_L, 1); /* 左モータPWM出力セット(-100～100) */
 	nxt_motor_set_speed(NXT_PORT_B, pwm_R, 1); /* 右モータPWM出力セット(-100～100) */
-//	xsprintf(tx_buf,"lf2:turn2=%d,%d\n",turn2,ecrobot_get_light_sensor(NXT_PORT_S3));
-	//ecrobot_send_bt(tx_buf,0,strlen(tx_buf));
 }
 //*****************************************************************************
 // 関数名 : turn_left_follow

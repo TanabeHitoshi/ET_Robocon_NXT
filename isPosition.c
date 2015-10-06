@@ -38,6 +38,21 @@ int tripmeter_left(void)
 	int s = nxt_motor_get_count(NXT_PORT_C); // エンコーダ左
 	return ((s / 360) * circumference) + (circumference * (s % 360) / 360);
 }
+//*****************************************************************************
+// 関数名 : max_position
+// 引数 : なし	NXT_PORT_C(左), NXT_PORT_B(右)
+// 返り値 : 走行距離（ｍｍ）
+// 概要 : エンコーダーで走行距離を測定する
+//*****************************************************************************
+int max_position(void)
+{
+	static int max_length = 0;
+
+	if(max_length < tripmeter()){
+		max_length = tripmeter();
+	}
+	return max_length;
+}
 
 int tripmeter_right(void)
 {

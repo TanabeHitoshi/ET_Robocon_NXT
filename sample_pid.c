@@ -124,8 +124,8 @@ TASK(TaskMain)
 			/* ソナー接続確認 */
 
 			systick_init();						/* 走行時間リセット */
-//			pattern = 10;
-			pattern = 3000;
+			pattern = 10;
+//			pattern = 300;
 			break;
 
 		case 10: /* スタートダッシュ */
@@ -142,7 +142,7 @@ TASK(TaskMain)
 			line_follow(speed, turn, gyro_sensor);
 
 			tail_control(tail_angle); // バランス走行用角度に制御
-			if (tripmeter()> 1000 ) {
+			if (tripmeter()> 500 ) {
 				counter = 0;
 				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
@@ -155,26 +155,33 @@ TASK(TaskMain)
 				tail_cnt = 0;
 				tail_angle--;
 			}
-			speed = 150 - tail_angle; // 通常はこの速度
+			speed = 126 - tail_angle; // 通常はこの速度
 			kp = 0.2;
+//			kp = 0.8;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
 			tail_control(tail_angle); // バランス走行用角度に制御
 			if (tripmeter()> 4134 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
-//		if (tripmeter()> 2500 && course == L_course) //
 			{
 				pattern = 12;//29.21　Ｌ
 				counter = 0;
 				ecrobot_sound_tone(880, 170, 100);
 				break;
 			}
-//			if((tripmeter() > 10200) && ( course == R_course) ){
 			if((tripmeter() > 4032) && ( course == R_course) ){
 				counter = 0;
 				pattern = 21;//27.90　Ｒ
 				ecrobot_sound_tone(440 * 3, 200, 100);
 			}
+
+#if 0
+			if(tripmeter() > 600){
+				counter = 0;
+				pattern =30; //40
+				ecrobot_sound_tone(440 * 3, 200, 100);
+			}
+#endif
 			break;
 
 		case 12://L 第2区間
@@ -208,7 +215,7 @@ TASK(TaskMain)
 				break;
 
 		case 14://L 第4区間
-				speed = 120; // 通常はこの速度
+				speed = 100; // 通常はこの速度
 				kp = 0.2;
 				ki = KI;
 				kd = KD;
@@ -243,7 +250,7 @@ TASK(TaskMain)
 				kd = KD;
 				if (tripmeter()> 8937 && course == L_course) // ルックアップゲート検知ならpattern=20 16000
 				{
-					pattern = 100;
+					pattern = 30;
 					counter = 0;
 					ecrobot_sound_tone(880, 170, 100);
 					break;
@@ -267,7 +274,7 @@ TASK(TaskMain)
 					break;
 
 		case 22://R 第3区間
-					speed = 127; // 通常はこの速度
+					speed = 110; // 通常はこの速度
 					kp = 0.2;
 					ki = KI;
 					kd = KD;
@@ -311,11 +318,11 @@ TASK(TaskMain)
 					line_follow(speed, turn, gyro_sensor);
 					break;
 		case 25://R 第6区間
-					speed = 40; // 通常はこの速度
+					speed = 55; // 通常はこの速度
 					kp = KP;
 					ki = KI;
 					kd = KD;
-					if (tripmeter()> 1400 && course == R_course)
+					if (tripmeter()> 9819 )
 					{
 						pattern = 40;
 						counter = 0;
@@ -328,35 +335,45 @@ TASK(TaskMain)
 		case 30:/* ルックアップゲート */
 			line_follow(speed, turn, gyro_sensor);
 			speed = 40;
-			if(sonar < 30 ){
+			if(sonar < 30 ){	//30
 				measure_P = measure0 = tripmeter();
-				speed = 0;
 				counter = 0;
 				pattern = 31;
 			}
 			break;
-		case 31:	/* ルックアップゲート */
+		case 31:/* ルックアップゲート */
+			line_follow(speed, turn, gyro_sensor);
+			speed = 20;
+			if(sonar < 20 ){	//30
+				measure_P = measure0 = tripmeter();
+				speed = 0;
+				counter = 0;
+				pattern = 32;
+			}
+			break;
+		case 32:	/* ルックアップゲート */
 			if(lookupgate()){
-					pattern = 32;
+					pattern = 33;
 					counter = 0;
 				}
 			break;
-		case 32:/***  ***/
+		case 33:/***  ***/
 			speed = 25;
 			line_follow2(speed, black2, white2);
 			//line_follow(speed, turn, gyro_sensor);
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
-			if (tripmeter() - measure_P > 1132 - 40 ) {
+			if (tripmeter() - measure_P > 1230) {//ゲートからガレージまでの距離
 				counter = 0;
-				pattern =33;
+				pattern =34;
 				measure0 = tripmeter();
 				}
 			break;
-		case 33:/***  ***/
+		case 34:/***  ***/
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
 			nxt_motor_set_speed(NXT_PORT_B,0,1);
 			nxt_motor_set_speed(NXT_PORT_C,0,1);
 			break;
+
 		case 40:/* 段差直前のトレース速度を落として走行 */
 			if(stairs()){
 				pattern = 41;
@@ -365,7 +382,7 @@ TASK(TaskMain)
 			}
 			break;
 		case 41:
-			speed = 20;
+			speed = 30;
 			line_follow(speed, turn, gyro_sensor);
 			if (tripmeter() - measure_P > 1000){
 				counter = 0;
@@ -378,10 +395,10 @@ TASK(TaskMain)
 			pattern =43;
 			break;
 		case 43:/***  ***/
-			speed = 15;
+			speed = 30;
 			line_follow2(speed, black2, white2);
 			tail_control(TAIL_ANGLE_STAND_UP - 20);
-			if (tripmeter() - measure_P > 1433 - 40 ) {
+			if (tripmeter() - measure_P > 1723 - 40 ) {//段差からガレージまでの距離
 				counter = 0;
 				pattern =44;
 				measure0 = tripmeter();
@@ -397,14 +414,14 @@ TASK(TaskMain)
 			speed = 0;
 			line_follow(speed, turn, gyro_sensor);
 			break;
-		case 3000:/*テスト走行*/
+		case 300:/*テスト走行*/
 			// 走行開始直後は速度を抑えて走行しながら、ゆっくりテールを上げる
 			tail_cnt++;
 			if( tail_cnt > 10 && (tail_angle > 0) ){
 				tail_cnt = 0;
 				tail_angle--;
 			}
-			speed = 60; // 通常はこの速度
+			speed = 40; // 通常はこの速度
 			kp = 0.5;
 			ki = KI;
 			kd = KD;
@@ -413,19 +430,19 @@ TASK(TaskMain)
 			tail_control(tail_angle); // バランス走行用角度に制御
 			if (tripmeter()> 400 ) {
 				counter = 0;
-				pattern = 3010;
+				pattern = 11;
 				ecrobot_sound_tone(880, 170, 100);
 			}
 			break;
-		case 3010: /*** 通常走行中 ***/
+		case 301: /*** 通常走行中 ***/
 			// 走行開始直後は速度を抑えて走行しながら、ゆっくりテールを上げる
 			tail_cnt++;
 			if( tail_cnt > 20 && (tail_angle > 0) ){
 				tail_cnt = 0;
 				tail_angle--;
 			}
-			speed = 60 - tail_angle; // 通常はこの速度
-			kp = 0.5;
+			speed = 40 - tail_angle; // 通常はこの速度
+			kp = KP;
 			ki = KI;
 			kd = KD;
 			line_follow(speed, turn, gyro_sensor);
@@ -437,9 +454,9 @@ TASK(TaskMain)
 				ecrobot_sound_tone(880, 170, 100);
 				break;
 			}
-			if((tripmeter() > 100000) && ( course == R_course) ){
+			if((tripmeter() > 7000) && ( course == R_course) ){
 				counter = 0;
-				pattern = 21;//27.90　Ｒ
+				pattern = 40;//27.90　Ｒ
 				ecrobot_sound_tone(440 * 3, 200, 100);
 			}
 			break;
